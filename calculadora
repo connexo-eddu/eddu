@@ -1,0 +1,3103 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Calculadora de Puntajes UDG</title>
+  <style>
+    body {
+      font-family: 'Barlow', sans-serif;
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(135deg, #eef2f3, #dff1f1);
+    }
+
+    .container {
+      max-width: 700px;
+      margin: 40px auto;
+      padding: 30px;
+      border-radius: 20px;
+      background: #ffffff;
+      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+      font-size: 14px;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    .header h1 {
+      font-size: 38px;
+      font-weight: 900;
+      color: #0328C9;
+      background: none;
+      padding: 0;
+      margin: 0;
+      position: relative;
+      display: inline-block;
+    }
+
+    .header h1::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      bottom: -8px;
+      width: 100%;
+      height: 4px;
+      background-color: #21A537;
+      border-radius: 2px;
+    }
+
+    label {
+      margin: 15px 0 5px;
+      font-size: 15px;
+      font-weight: bold;
+      color: #444;
+    }
+
+    select, input {
+      width: 100%;
+      padding: 12px 15px;
+      margin-bottom: 20px;
+      border: none;
+      border-radius: 12px;
+      background: #f2f2f2;
+      box-shadow: inset 2px 2px 5px #ccc, inset -2px -2px 5px #fff;
+      font-size: 16px;
+      color: #333;
+      transition: all 0.3s ease;
+    }
+
+    select:focus, input:focus {
+      outline: none;
+      background: #ffffff;
+      box-shadow: 0 0 10px rgba(3, 40, 201, 0.2);
+    }
+
+    button {
+      width: 100%;
+      padding: 14px;
+      background-color: #0328C9;
+      color: #fff;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      font-size: 18px;
+      font-weight: bold;
+      transition: background-color 0.3s ease, transform 0.2s ease;
+    }
+
+    button:hover {
+      background-color: #0040b2;
+      transform: scale(1.02);
+    }
+
+    #resultContainer {
+      display: none;
+      margin-top: 30px;
+      padding: 25px;
+      border-radius: 15px;
+      background: #fdfdfd;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.08);
+    }
+
+    #resultContainer h2 {
+      font-size: 32px;
+      color: #0328C9;
+      font-weight: bold;
+      margin-bottom: 20px;
+    }
+
+    #resultTable {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 15px;
+    }
+
+    #resultTable th, #resultTable td {
+      padding: 15px;
+      text-align: left;
+      border-bottom: 1px solid #ccc;
+      font-size: 15px;
+    }
+
+    #resultTable th {
+      background-color: #f5f5f5;
+      color: #333;
+    }
+
+    #resultTable td {
+      background-color: #fcfcfc;
+      font-weight: 600;
+    }
+
+    #graphContainer {
+      margin-top: 30px;
+      text-align: center;
+    }
+
+    #graphContainer canvas {
+      max-width: 100%;
+      max-height: 400px;
+    }
+
+    #otherCenters {
+      margin-top: 30px;
+      display: none;
+      padding: 20px;
+      background-color: #f8f9fa;
+      border-radius: 12px;
+      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    }
+
+    .otherCenters-title {
+      font-size: 28px;
+      color: #0328C9;
+      margin-bottom: 15px;
+    }
+
+    #disclaimer {
+      margin-top: 30px;
+      padding: 18px;
+      background-color: #fff3cd;
+      color: #856404;
+      font-weight: bold;
+      border-radius: 12px;
+      border-left: 6px solid #ffeeba;
+      font-size: 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    #disclaimer::before {
+      content: "\26A0";
+      font-size: 22px;
+    }
+
+    @media (max-width: 600px) {
+      .container {
+        padding: 20px;
+      }
+
+      .header h1, .otherCenters-title, #resultContainer h2 {
+        font-size: 22px;
+      }
+
+      label, select, input, button {
+        font-size: 14px;
+      }
+
+      #resultTable th, #resultTable td {
+        font-size: 13px;
+        padding: 10px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>CALCULADORA DE PUNTAJES MÍNIMOS UDG</h1>
+    </div>
+    <!-- Continúa con el contenido del formulario, resultados, gráfica, etc. -->
+    <img src="https://unx.mx/wp-content/uploads/2024/07/Leon-negro.png" alt="Logo UDG" style="display: block; margin: 0 auto; max-width: 30%; height: auto; margin-bottom: 20px;">
+        
+        <label for="campus">Selecciona tu centro universitario:</label>
+        <select id="campus">
+            <!-- Las opciones se cargarán dinámicamente -->
+        </select>
+        <label for="career">Selecciona tu carrera:</label>
+        <select id="career">
+            <!-- Las opciones se cargarán dinámicamente -->
+        </select>
+        <label for="average">Agrega tu promedio de preparatoria<br/>(ESCALA DE 0 A 100):</label>
+        <input type="number" id="average" placeholder="Promedio de preparatoria" step="0.01">
+        <button id="calculateButton">CALCULAR</button>
+        
+        <div id="resultContainer">
+            <h2>RESULTADOS</h2>
+            <table id="resultTable">
+                <tr>
+                    <th>Puntaje mínimo</th>
+                    <td id="minScore"></td>
+                </tr>
+                <tr>
+                    <th>Puntaje necesario en el examen</th>
+                    <td id="examScore"></td>
+                </tr>
+                <tr>
+                    <th>Admitidos último calendario</th>
+                    <td id="admitted"></td>
+                </tr>
+                <tr>
+                    <th>No admitidos último calendario</th>
+                    <td id="notAdmitted"></td>
+                </tr>
+                <tr>
+                    <th>% De admisión</th>
+                    <td id="admissionPercentage"></td>
+                </tr>
+            </table>
+        </div>
+        
+        <div id="graphContainer">
+            <!-- Aquí se mostrará el gráfico -->
+            <canvas id="myChart" style="display: none;"></canvas>
+        </div>
+        
+        <div id="otherCenters">
+            <h3 class="otherCenters-title">Otros centros universitarios que ofrecen la carrera</h3>
+            <!-- Aquí se mostrarán los otros centros universitarios que ofrecen la misma carrera -->
+        </div>
+        
+        <div id="disclaimer">
+            Estos datos son extraídos del documento oficial UDG puntajes mínimos y cada semestre pueden cambiar. Tómalos solo como una referencia; te recomendamos aumentar al menos 3 puntos el resultado del examen que viene marcado.
+        </div>
+    </div>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var data = [ {
+      "CAMPUS": "CUAAD HUENTITAN",
+      "CARRERA": "LICENCIATURA EN ARQUITECTURA",
+      "ASPIRANTES": 760,
+      "ADMITIDOS": 220,
+      "NO ADMITIDOS": 540,
+      "CUPO": 220,
+      "% ADMISIÓN": 0.2894736842105263,
+      "PUNTAJE MÍNIMO": 156.35
+    },
+    {
+      "CAMPUS": "CUAAD HUENTITAN",
+      "CARRERA": "LICENCIATURA EN DISEÑO, ARTE Y TECNOLOGIAS INTERACTIVAS",
+      "ASPIRANTES": 268,
+      "ADMITIDOS": 40,
+      "NO ADMITIDOS": 228,
+      "CUPO": 40,
+      "% ADMISIÓN": 0.14925373134328357,
+      "PUNTAJE MÍNIMO": 176.3367
+    },
+    {
+      "CAMPUS": "CUAAD HUENTITAN",
+      "CARRERA": "LICENCIATURA EN DISEÑO DE INTERIORES Y AMBIENTACION",
+      "ASPIRANTES": 207,
+      "ADMITIDOS": 60,
+      "NO ADMITIDOS": 147,
+      "CUPO": 60,
+      "% ADMISIÓN": 0.2898550724637681,
+      "PUNTAJE MÍNIMO": 148.13
+    },
+    {
+      "CAMPUS": "CUAAD HUENTITAN",
+      "CARRERA": "LICENCIATURA EN DISEÑO DE MODAS",
+      "ASPIRANTES": 62,
+      "ADMITIDOS": 40,
+      "NO ADMITIDOS": 22,
+      "CUPO": 40,
+      "% ADMISIÓN": 0.6451612903225806,
+      "PUNTAJE MÍNIMO": 135.92
+    },
+    {
+      "CAMPUS": "CUAAD HUENTITAN",
+      "CARRERA": "LICENCIATURA EN DISEÑO INDUSTRIAL",
+      "ASPIRANTES": 330,
+      "ADMITIDOS": 80,
+      "NO ADMITIDOS": 250,
+      "CUPO": 80,
+      "% ADMISIÓN": 0.24242424242424243,
+      "PUNTAJE MÍNIMO": 154.75
+    },
+    {
+      "CAMPUS": "CUAAD HUENTITAN",
+      "CARRERA": "LICENCIATURA EN DISEÑO PARA LA COMUNICACION GRAFICA",
+      "ASPIRANTES": 288,
+      "ADMITIDOS": 180,
+      "NO ADMITIDOS": 108,
+      "CUPO": 180,
+      "% ADMISIÓN": 0.625,
+      "PUNTAJE MÍNIMO": 128.31
+    },
+    {
+      "CAMPUS": "CUAAD HUENTITAN",
+      "CARRERA": "LICENCIATURA EN URBANISTICA Y MEDIO AMBIENTE",
+      "ASPIRANTES": 28,
+      "ADMITIDOS": 28,
+      "NO ADMITIDOS": 0,
+      "CUPO": 28,
+      "% ADMISIÓN": 1,
+      "PUNTAJE MÍNIMO": 101.59
+    },
+    {
+      "CAMPUS": "CUAAD SANTA MARIA (ARTES)",
+      "CARRERA": "LICENCIATURA EN ARTES AUDIOVISUALES",
+      "ASPIRANTES": 19,
+      "ADMITIDOS": 19,
+      "NO ADMITIDOS": 0,
+      "CUPO": 19,
+      "% ADMISIÓN": 1,
+      "PUNTAJE MÍNIMO": 126.8733
+    },
+    {
+      "CAMPUS": "CUAAD SANTA MARIA (ARTES)",
+      "CARRERA": "LICENCIATURA EN ARTES ESCENICAS PARA LA EXPRESION DANCISTICA",
+      "ASPIRANTES": 34,
+      "ADMITIDOS": 34,
+      "NO ADMITIDOS": 0,
+      "CUPO": 35,
+      "% ADMISIÓN": 1,
+      "PUNTAJE MÍNIMO": 98.58
+    },
+    {
+      "CAMPUS": "CUAAD SANTA MARIA (ARTES)",
+      "CARRERA": "LICENCIATURA EN ARTES ESCENICAS PARA LA EXPRESION DANCISTICA, NIVELACION",
+      "ASPIRANTES": 5,
+      "ADMITIDOS": 5,
+      "NO ADMITIDOS": 0,
+      "CUPO": 10,
+      "% ADMISIÓN": 1,
+      "PUNTAJE MÍNIMO": 76.15
+    },
+    {
+      "CAMPUS": "CUAAD SANTA MARIA (ARTES)",
+      "CARRERA": "LICENCIATURA EN ARTES ESCENICAS PARA LA EXPRESION TEATRAL",
+      "ASPIRANTES": 23,
+      "ADMITIDOS": 23,
+      "NO ADMITIDOS": 0,
+      "CUPO": 25,
+      "% ADMISIÓN": 1,
+      "PUNTAJE MÍNIMO": 107.8333
+    },
+    {
+      "CAMPUS": "CUAAD SANTA MARIA (ARTES)",
+      "CARRERA": "LICENCIATURA EN ARTES ESCENICAS PARA LA EXPRESION TEATRAL, NIVELACION",
+      "ASPIRANTES": 16,
+      "ADMITIDOS": 16,
+      "NO ADMITIDOS": 0,
+      "CUPO": 20,
+      "% ADMISIÓN": 1,
+      "PUNTAJE MÍNIMO": 72.17
+    },
+    {
+      "CAMPUS": "CUAAD SANTA MARIA (ARTES)",
+      "CARRERA": "LICENCIATURA EN ARTES VISUALES PARA LA EXPRESION FOTOGRAFICA",
+      "ASPIRANTES": 39,
+      "ADMITIDOS": 39,
+      "NO ADMITIDOS": 0,
+      "CUPO": 43,
+      "% ADMISIÓN": 1,
+      "PUNTAJE MÍNIMO": 91.7133
+    },
+    {
+      "CAMPUS": "CUAAD SANTA MARIA (ARTES)",
+      "CARRERA": "LICENCIATURA EN ARTES VISUALES PARA LA EXPRESION PLASTICA",
+      "ASPIRANTES": 58,
+      "ADMITIDOS": 58,
+      "NO ADMITIDOS": 0,
+      "CUPO": 60,
+      "% ADMISIÓN": 1,
+      "PUNTAJE MÍNIMO": 105
+    },
+    {
+      "CAMPUS": "CUCBA",
+      "CARRERA": "INGENIERO AGRONOMO",
+      "ASPIRANTES": 392,
+      "ADMITIDOS": 260,
+      "NO ADMITIDOS": 132,
+      "CUPO": 260,
+      "% ADMISIÓN": 0.6632653061224489,
+      "PUNTAJE MÍNIMO": 112.5733
+    },
+    {
+      "CAMPUS": "CUCBA",
+      "CARRERA": "LICENCIATURA EN AGRONEGOCIOS",
+      "ASPIRANTES": 67,
+      "ADMITIDOS": 55,
+      "NO ADMITIDOS": 12,
+      "CUPO": 55,
+      "% ADMISIÓN": 0.8208955223880597,
+      "PUNTAJE MÍNIMO": 104.6767
+    },
+    {
+      "CAMPUS": "CUCBA",
+      "CARRERA": "LICENCIATURA EN BIOLOGIA",
+      "ASPIRANTES": 154,
+      "ADMITIDOS": 154,
+      "NO ADMITIDOS": 0,
+      "CUPO": 260,
+      "% ADMISIÓN": 1,
+      "PUNTAJE MÍNIMO": 91.4133
+    },
+    {
+      "CAMPUS": "CUCBA",
+      "CARRERA": "LICENCIATURA EN CIENCIA DE LOS ALIMENTOS",
+      "ASPIRANTES": 18,
+      "ADMITIDOS": 18,
+      "NO ADMITIDOS": 0,
+      "CUPO": 55,
+      "% ADMISIÓN": 1,
+      "PUNTAJE MÍNIMO": 88.93
+    },
+    {
+      "CAMPUS": "CUCBA",
+      "CARRERA": "LICENCIATURA EN MEDICINA VETERINARIA Y ZOOTECNIA",
+      "ASPIRANTES": 824,
+      "ADMITIDOS": 270,
+      "NO ADMITIDOS": 554,
+      "CUPO": 270,
+      "% ADMISIÓN": 0.3276699029126214,
+      "PUNTAJE MÍNIMO": 135.7667
+    },
+    {
+      "CAMPUS": " CUCEA",
+      "CARRERA": "INGENIERIA EN NEGOCIOS",
+      "ASPIRANTES": 175,
+      "ADMITIDOS": 138,
+      "NO ADMITIDOS": 37,
+      "CUPO": 138,
+      "% ADMISIÓN": 0.7885714285714286,
+      "PUNTAJE MÍNIMO": 117.1833
+    },
+    {
+      "CAMPUS": " CUCEA",
+      "CARRERA": "LICENCIATURA EN ADMINISTRACION",
+      "ASPIRANTES": 451,
+      "ADMITIDOS": 430,
+      "NO ADMITIDOS": 21,
+      "CUPO": 430,
+      "% ADMISIÓN": 0.9534368070953437,
+      "PUNTAJE MÍNIMO": 100.13
+    },
+    {
+      "CAMPUS": " CUCEA",
+      "CARRERA": "LICENCIATURA EN ADMINISTRACION FINANCIERA Y SISTEMAS",
+      "ASPIRANTES": 444,
+      "ADMITIDOS": 310,
+      "NO ADMITIDOS": 134,
+      "CUPO": 310,
+      "% ADMISIÓN": 0.6981981981981982,
+      "PUNTAJE MÍNIMO": 128.5033
+    },
+    {
+      "CAMPUS": " CUCEA",
+      "CARRERA": "LICENCIATURA EN ADMINISTRACION GUBERNAMENTAL Y POLITICAS PUBLICAS",
+      "ASPIRANTES": 43,
+      "ADMITIDOS": 43,
+      "NO ADMITIDOS": 0,
+      "CUPO": 55,
+      "% ADMISIÓN": 1,
+      "PUNTAJE MÍNIMO": 91.1467
+    },
+    {
+      "CAMPUS": " CUCEA",
+      "CARRERA": "LICENCIATURA EN CONTADURIA PUBLICA",
+      "ASPIRANTES": 615,
+      "ADMITIDOS": 488,
+      "NO ADMITIDOS": 127,
+      "CUPO": 488,
+      "% ADMISIÓN": 0.7934959349593496,
+      "PUNTAJE MÍNIMO": 116.5833
+    },
+    {
+      "CAMPUS": " CUCEA",
+      "CARRERA": "LICENCIATURA EN ECONOMIA",
+      "ASPIRANTES": 88,
+      "ADMITIDOS": 88,
+      "NO ADMITIDOS": 0,
+      "CUPO": 90,
+      "% ADMISIÓN": 1,
+      "PUNTAJE MÍNIMO": 88.83
+    },
+    {
+      "CAMPUS": " CUCEA",
+      "CARRERA": "LICENCIATURA EN GESTION DE NEGOCIOS GASTRONOMICOS",
+      "ASPIRANTES": 288,
+      "ADMITIDOS": 137,
+      "NO ADMITIDOS": 151,
+      "CUPO": 137,
+      "% ADMISIÓN": 0.4756944444444444,
+      "PUNTAJE MÍNIMO": 133.5
+    },
+    {
+      "CAMPUS": " CUCEA",
+      "CARRERA": "LICENCIATURA EN GESTION Y ECONOMIA AMBIENTAL",
+      "ASPIRANTES": 23,
+      "ADMITIDOS": 23,
+      "NO ADMITIDOS": 0,
+      "CUPO": 50,
+      "% ADMISIÓN": 1,
+      "PUNTAJE MÍNIMO": 104.3333
+    },
+    {
+      "CAMPUS": " CUCEA",
+      "CARRERA": "LICENCIATURA EN MERCADOTECNIA",
+      "ASPIRANTES": 403,
+      "ADMITIDOS": 342,
+      "NO ADMITIDOS": 61,
+      "CUPO": 342,
+      "% ADMISIÓN": 0.8486352357320099,
+      "PUNTAJE MÍNIMO": 112.3333
+    },
+    {
+      "CAMPUS": " CUCEA",
+      "CARRERA": "LICENCIATURA EN NEGOCIOS INTERNACIONALES",
+      "ASPIRANTES": 777,
+      "ADMITIDOS": 471,
+      "NO ADMITIDOS": 306,
+      "CUPO": 471,
+      "% ADMISIÓN": 0.6061776061776062,
+      "PUNTAJE MÍNIMO": 126.2067
+    },
+    {
+      "CAMPUS": " CUCEA",
+      "CARRERA": "LICENCIATURA EN RECURSOS HUMANOS",
+      "ASPIRANTES": 152,
+      "ADMITIDOS": 152,
+      "NO ADMITIDOS": 0,
+      "CUPO": 169,
+      "% ADMISIÓN": 1,
+      "PUNTAJE MÍNIMO": 89.2133
+    },
+    {
+      "CAMPUS": " CUCEA",
+      "CARRERA": "LICENCIATURA EN RELACIONES PUBLICAS Y COMUNICACION",
+      "ASPIRANTES": 126,
+      "ADMITIDOS": 104,
+      "NO ADMITIDOS": 22,
+      "CUPO": 104,
+      "% ADMISIÓN": 0.8253968253968254,
+      "PUNTAJE MÍNIMO": 114.8867
+    },
+    {
+      "CAMPUS": " CUCEA",
+      "CARRERA": "LICENCIATURA EN TECNOLOGIAS DE LA INFORMACION",
+      "ASPIRANTES": 101,
+      "ADMITIDOS": 101,
+      "NO ADMITIDOS": 0,
+      "CUPO": 114,
+      "% ADMISIÓN": 1,
+      "PUNTAJE MÍNIMO": 87.25
+    },
+    {
+      "CAMPUS": " CUCEA",
+      "CARRERA": "LICENCIATURA EN TURISMO",
+      "ASPIRANTES": 102,
+      "ADMITIDOS": 102,
+      "NO ADMITIDOS": 0,
+      "CUPO": 178,
+      "% ADMISIÓN": 1,
+      "PUNTAJE MÍNIMO": 90.1667
+    },
+    {
+      "CAMPUS": "SEDE VIRTUAL CUCEA",
+      "CARRERA": "LICENCIATURA EN MERCADOTECNIA DIGITAL",
+      "ASPIRANTES": 136,
+      "ADMITIDOS": 121,
+      "NO ADMITIDOS": 15,
+      "CUPO": 143,
+      "% ADMISIÓN": 0.8897058823529411,
+      "PUNTAJE MÍNIMO": 60
+    },
+    {
+      "CAMPUS": "CUCEI",
+      "CARRERA": "INGENIERIA BIOMEDICA",
+      "ASPIRANTES": 261,
+      "ADMITIDOS": 110,
+      "NO ADMITIDOS": 151,
+      "CUPO": 110,
+      "% ADMISIÓN": 0.421455938697318,
+      "PUNTAJE MÍNIMO": 155.37
+    },
+    {
+      "CAMPUS": "CUCEI",
+      "CARRERA": "INGENIERIA CIVIL",
+      "ASPIRANTES": 391,
+      "ADMITIDOS": 140,
+      "NO ADMITIDOS": 251,
+      "CUPO": 140,
+      "% ADMISIÓN": 0.35805626598465473,
+      "PUNTAJE MÍNIMO": 146.41
+    },
+    {
+      "CAMPUS": "CUCEI",
+      "CARRERA": "INGENIERIA EN CIENCIA DE MATERIALES",
+      "ASPIRANTES": 12,
+      "ADMITIDOS": 12,
+      "NO ADMITIDOS": 0,
+      "CUPO": 30,
+      "% ADMISIÓN": 1,
+      "PUNTAJE MÍNIMO": 118.1967
+    },
+    {
+      "CAMPUS": "CUCEI",
+      "CARRERA": "INGENIERIA EN COMPUTACION",
+      "ASPIRANTES": 444,
+      "ADMITIDOS": 340,
+      "NO ADMITIDOS": 104,
+      "CUPO": 340,
+      "% ADMISIÓN": 0.7657657657657657,
+      "PUNTAJE MÍNIMO": 124.9633
+    },
+    {
+      "CAMPUS": "CUCEI",
+      "CARRERA": "INGENIERIA EN ELECTROMOVILIDAD Y AUTOTRONICA",
+      "ASPIRANTES": 19,
+      "ADMITIDOS": 19,
+      "NO ADMITIDOS": 0,
+      "CUPO": 40,
+      "% ADMISIÓN": 1,
+      "PUNTAJE MÍNIMO": 109.89
+    },
+    {
+      "CAMPUS": "CUCEI",
+      "CARRERA": "INGENIERIA EN ELECTRONICA Y SISTEMAS INTELIGENTES",
+      "ASPIRANTES": 169,
+      "ADMITIDOS": 110,
+      "NO ADMITIDOS": 59,
+      "CUPO": 110,
+      "% ADMISIÓN": 0.650887573964497,
+      "PUNTAJE MÍNIMO": 125.9433
+    },
+    {
+      "CAMPUS": "CUCEI",
+      "CARRERA": "INGENIERIA EN LOGISTICA Y TRANSPORTE",
+      "ASPIRANTES": 63,
+      "ADMITIDOS": 60,
+      "NO ADMITIDOS": 3,
+      "CUPO": 60,
+      "% ADMISIÓN": 0.9523809523809523,
+      "PUNTAJE MÍNIMO": 105.9333
+    },
+    {
+      "CAMPUS": "CUCEI",
+      "CARRERA": "INGENIERIA EN MECATRONICA INTELIGENTE",
+      "ASPIRANTES": 46,
+      "ADMITIDOS": 40,
+      "NO ADMITIDOS": 6,
+      "CUPO": 40,
+      "% ADMISIÓN": 0.8695652173913043,
+      "PUNTAJE MÍNIMO": 122.2933
+    },
+    {
+      "CAMPUS": "CUCEI",
+      "CARRERA": "INGENIERIA EN TOPOGRAFIA GEOMATICA",
+      "ASPIRANTES": 28,
+      "ADMITIDOS": 28,
+      "NO ADMITIDOS": 0,
+      "CUPO": 60,
+      "% ADMISIÓN": 1,
+      "PUNTAJE MÍNIMO": 102.3967
+    },
+    {
+      "CAMPUS": "CUCEI",
+      "CARRERA": "INGENIERIA FOTONICA",
+      "ASPIRANTES": 22,
+      "ADMITIDOS": 20,
+      "NO ADMITIDOS": 2,
+      "CUPO": 35,
+      "% ADMISIÓN": 0.9090909090909091,
+      "PUNTAJE MÍNIMO": 102.71
+    },
+    {
+      "CAMPUS": "CUCEI",
+      "CARRERA": "INGENIERIA INDUSTRIAL",
+      "ASPIRANTES": 447,
+      "ADMITIDOS": 220,
+      "NO ADMITIDOS": 227,
+      "CUPO": 220,
+      "% ADMISIÓN": 0.49217002237136465,
+      "PUNTAJE MÍNIMO": 137.65
+    },
+    {
+      "CAMPUS": "CUCEI",
+      "CARRERA": "INGENIERIA INFORMATICA",
+      "ASPIRANTES": 410,
+      "ADMITIDOS": 290,
+      "NO ADMITIDOS": 120,
+      "CUPO": 290,
+      "% ADMISIÓN": 0.7073170731707317,
+      "PUNTAJE MÍNIMO": 129.81
+    },
+    {
+      "CAMPUS": "CUCEI",
+      "CARRERA": "INGENIERIA MECANICA ELECTRICA",
+      "ASPIRANTES": 393,
+      "ADMITIDOS": 210,
+      "NO ADMITIDOS": 183,
+      "CUPO": 210,
+      "% ADMISIÓN": 0.5343511450381679,
+      "PUNTAJE MÍNIMO": 135.3633
+    },
+    {
+      "CAMPUS": "CUCEI",
+      "CARRERA": "INGENIERIA QUIMICA",
+      "ASPIRANTES": 157,
+      "ADMITIDOS": 155,
+      "NO ADMITIDOS": 2,
+      "CUPO": 170,
+      "% ADMISIÓN": 0.9872611464968153,
+      "PUNTAJE MÍNIMO": 104.9167
+    },
+    {
+      "CAMPUS": "CUCEI",
+      "CARRERA": "INGENIERIA ROBOTICA",
+      "ASPIRANTES": 176,
+      "ADMITIDOS": 100,
+      "NO ADMITIDOS": 76,
+      "CUPO": 100,
+      "% ADMISIÓN": 0.5681818181818182,
+      "PUNTAJE MÍNIMO": 138.7733
+    },
+    {
+      "CAMPUS": "CUCEI",
+      "CARRERA": "LICENCIATURA EN FISICA",
+      "ASPIRANTES": 62,
+      "ADMITIDOS": 62,
+      "NO ADMITIDOS": 0,
+      "CUPO": 62,
+      "% ADMISIÓN": 1,
+      "PUNTAJE MÍNIMO": 104.72
+    },
+    {
+      "CAMPUS": "CUCEI",
+      "CARRERA": "LICENCIATURA EN INGENIERIA EN ALIMENTOS Y BIOTECNOLOGIA",
+      "ASPIRANTES": 132,
+      "ADMITIDOS": 90,
+      "NO ADMITIDOS": 42,
+      "CUPO": 90,
+      "% ADMISIÓN": 0.6818181818181818,
+      "PUNTAJE MÍNIMO": 125.8767
+    },
+    {
+      "CAMPUS": "CUCEI",
+      "CARRERA": "LICENCIATURA EN MATEMATICAS",
+      "ASPIRANTES": 25,
+      "ADMITIDOS": 22,
+      "NO ADMITIDOS": 3,
+      "CUPO": 40,
+      "% ADMISIÓN": 0.88,
+      "PUNTAJE MÍNIMO": 120.94
+    },
+    {
+      "CAMPUS": "CUCEI",
+      "CARRERA": "LICENCIATURA EN QUIMICA",
+      "ASPIRANTES": 86,
+      "ADMITIDOS": 85,
+      "NO ADMITIDOS": 1,
+      "CUPO": 95,
+      "% ADMISIÓN": 0.9883720930232558,
+      "PUNTAJE MÍNIMO": 101.4133
+    },
+    {
+      "CAMPUS": "CUCEI",
+      "CARRERA": "LICENCIATURA EN QUIMICO FARMACEUTICO BIOLOGO",
+      "ASPIRANTES": 448,
+      "ADMITIDOS": 195,
+      "NO ADMITIDOS": 253,
+      "CUPO": 195,
+      "% ADMISIÓN": 0.43526785714285715,
+      "PUNTAJE MÍNIMO": 146.28
+    },
+    {
+      "CAMPUS": " VIRTUAL CUCEI",
+      "CARRERA": "LICENCIATURA EN DESARROLLO DE SISTEMAS WEB",
+      "ASPIRANTES": 98,
+      "ADMITIDOS": 86,
+      "NO ADMITIDOS": 12,
+      "CUPO": 100,
+      "% ADMISIÓN": 0.8775510204081632,
+      "PUNTAJE MÍNIMO": 60
+    },
+    {
+      "CAMPUS": " VIRTUAL CUCEI",
+      "CARRERA": "LICENCIATURA EN TECNOLOGIAS E INFORMACION",
+      "ASPIRANTES": 65,
+      "ADMITIDOS": 60,
+      "NO ADMITIDOS": 5,
+      "CUPO": 70,
+      "% ADMISIÓN": 0.9230769230769231,
+      "PUNTAJE MÍNIMO": 60
+    },
+    {
+      "CAMPUS": "CUCS",
+      "CARRERA": "LICENCIATURA EN BIOQUIMICA CLINICA Y MEDICINA DE LABORATORIO",
+      "ASPIRANTES": 53,
+      "ADMITIDOS": 30,
+      "NO ADMITIDOS": 23,
+      "CUPO": 30,
+      "% ADMISIÓN": 0.5660377358490566,
+      "PUNTAJE MÍNIMO": 142.2333
+    },
+    {
+      "CAMPUS": "CUCS",
+      "CARRERA": "LICENCIATURA EN CIENCIAS FORENSES",
+      "ASPIRANTES": 112,
+      "ADMITIDOS": 37,
+      "NO ADMITIDOS": 75,
+      "CUPO": 37,
+      "% ADMISIÓN": 0.33035714285714285,
+      "PUNTAJE MÍNIMO": 136.1967
+    },
+    {
+      "CAMPUS": "CUCS",
+      "CARRERA": "LICENCIATURA EN CIRUJANO DENTISTA",
+      "ASPIRANTES": 1071,
+      "ADMITIDOS": 156,
+      "NO ADMITIDOS": 915,
+      "CUPO": 156,
+      "% ADMISIÓN": 0.14565826330532214,
+      "PUNTAJE MÍNIMO": 165.81
+    },
+    {
+      "CAMPUS": "CUCS",
+      "CARRERA": "LICENCIATURA EN CULTURA FISICA Y DEPORTES",
+      "ASPIRANTES": 366,
+      "ADMITIDOS": 186,
+      "NO ADMITIDOS": 180,
+      "CUPO": 186,
+      "% ADMISIÓN": 0.5081967213114754,
+      "PUNTAJE MÍNIMO": 121.6667
+    },
+    {
+      "CAMPUS": "CUCS",
+      "CARRERA": "LICENCIATURA EN ENFERMERIA",
+      "ASPIRANTES": 694,
+      "ADMITIDOS": 360,
+      "NO ADMITIDOS": 334,
+      "CUPO": 360,
+      "% ADMISIÓN": 0.5187319884726225,
+      "PUNTAJE MÍNIMO": 124.2433
+    },
+    {
+      "CAMPUS": "CUCS",
+      "CARRERA": "LICENCIATURA EN ENFERMERIA (NIVELACION)",
+      "ASPIRANTES": 47,
+      "ADMITIDOS": 47,
+      "NO ADMITIDOS": 0,
+      "CUPO": 47,
+      "% ADMISIÓN": 1,
+      "PUNTAJE MÍNIMO": 69
+    },
+    {
+      "CAMPUS": "CUCS",
+      "CARRERA": "LICENCIATURA EN NUTRICION",
+      "ASPIRANTES": 414,
+      "ADMITIDOS": 124,
+      "NO ADMITIDOS": 290,
+      "CUPO": 124,
+      "% ADMISIÓN": 0.2995169082125604,
+      "PUNTAJE MÍNIMO": 144.9167
+    },
+    {
+      "CAMPUS": "CUCS",
+      "CARRERA": "LICENCIATURA EN PODOLOGIA",
+      "ASPIRANTES": 102,
+      "ADMITIDOS": 35,
+      "NO ADMITIDOS": 67,
+      "CUPO": 35,
+      "% ADMISIÓN": 0.3431372549019608,
+      "PUNTAJE MÍNIMO": 129.4733
+    },
+    {
+      "CAMPUS": "CUCS",
+      "CARRERA": "LICENCIATURA EN PSICOLOGIA",
+      "ASPIRANTES": 1198,
+      "ADMITIDOS": 218,
+      "NO ADMITIDOS": 980,
+      "CUPO": 218,
+      "% ADMISIÓN": 0.18196994991652754,
+      "PUNTAJE MÍNIMO": 159.31
+    },
+    {
+      "CAMPUS": "CUCS",
+      "CARRERA": "LICENCIATURA EN TERAPIA FISICA",
+      "ASPIRANTES": 449,
+      "ADMITIDOS": 70,
+      "NO ADMITIDOS": 379,
+      "CUPO": 70,
+      "% ADMISIÓN": 0.155902004454343,
+      "PUNTAJE MÍNIMO": 155.0733
+    },
+    {
+      "CAMPUS": "CUCS",
+      "CARRERA": "LICENCIATURA EN TERAPIA FISICA (NIVELACION)",
+      "ASPIRANTES": 20,
+      "ADMITIDOS": 20,
+      "NO ADMITIDOS": 0,
+      "CUPO": 20,
+      "% ADMISIÓN": 1,
+      "PUNTAJE MÍNIMO": 81.25
+    },
+    {
+      "CAMPUS": "CUCS",
+      "CARRERA": "MEDICO CIRUJANO Y PARTERO",
+      "ASPIRANTES": 2180,
+      "ADMITIDOS": 367,
+      "NO ADMITIDOS": 1813,
+      "CUPO": 367,
+      "% ADMISIÓN": 0.168348623853211,
+      "PUNTAJE MÍNIMO": 179.5733
+    },
+    {
+      "CAMPUS": "CUCS",
+      "CARRERA": "TECNICO SUPERIOR UNIVERSITARIO EN EMERGENCIAS, SEGURIDAD LABORAL Y RESCATES",
+      "ASPIRANTES": 135,
+      "ADMITIDOS": 62,
+      "NO ADMITIDOS": 73,
+      "CUPO": 62,
+      "% ADMISIÓN": 0.45925925925925926,
+      "PUNTAJE MÍNIMO": 126.53
+    },
+    {
+      "CAMPUS": "CUCS",
+      "CARRERA": "TECNICO SUPERIOR UNIVERSITARIO EN PROTESIS DENTAL",
+      "ASPIRANTES": 80,
+      "ADMITIDOS": 63,
+      "NO ADMITIDOS": 17,
+      "CUPO": 63,
+      "% ADMISIÓN": 0.7875,
+      "PUNTAJE MÍNIMO": 113.21
+    },
+    {
+      "CAMPUS": "CUCS",
+      "CARRERA": "TECNICO SUPERIOR UNIVERSITARIO EN RADIOLOGIA E IMAGEN",
+      "ASPIRANTES": 109,
+      "ADMITIDOS": 94,
+      "NO ADMITIDOS": 15,
+      "CUPO": 94,
+      "% ADMISIÓN": 0.8623853211009175,
+      "PUNTAJE MÍNIMO": 104.0567
+    },
+    {
+      "CAMPUS": "CUCS",
+      "CARRERA": "TECNICO SUPERIOR UNIVERSITARIO EN TERAPIA RESPIRATORIA",
+      "ASPIRANTES": 14,
+      "ADMITIDOS": 14,
+      "NO ADMITIDOS": 0,
+      "CUPO": 32,
+      "% ADMISIÓN": 1,
+      "PUNTAJE MÍNIMO": 106.9333
+    },
+    {
+      "CAMPUS": " CUCSH",
+      "CARRERA": "ABOGADO",
+      "ASPIRANTES": 752,
+      "ADMITIDOS": 421,
+      "NO ADMITIDOS": 331,
+      "CUPO": 421,
+      "% ADMISIÓN": 0.5598404255319149,
+      "PUNTAJE MÍNIMO": 126.3333
+    },
+    {
+      "CAMPUS": " CUCSH",
+      "CARRERA": "ABOGADO (SEMIESCOLARIZADO)",
+      "ASPIRANTES": 266,
+      "ADMITIDOS": 200,
+      "NO ADMITIDOS": 66,
+      "CUPO": 200,
+      "% ADMISIÓN": 0.7518796992481203,
+      "PUNTAJE MÍNIMO": 112.7567
+    },
+    {
+      "CAMPUS": " CUCSH",
+      "CARRERA": "LICENCIATURA EN ANTROPOLOGIA",
+      "ASPIRANTES": 19,
+      "ADMITIDOS": 19,
+      "NO ADMITIDOS": 0,
+      "CUPO": 40,
+      "% ADMISIÓN": 1,
+      "PUNTAJE MÍNIMO": 105.3733
+    },
+    {
+      "CAMPUS": " CUCSH",
+      "CARRERA": "LICENCIATURA EN COMUNICACION PUBLICA",
+      "ASPIRANTES": 51,
+      "ADMITIDOS": 36,
+      "NO ADMITIDOS": 15,
+      "CUPO": 36,
+      "% ADMISIÓN": 0.7058823529411765,
+      "PUNTAJE MÍNIMO": 121.5367
+    },
+    {
+      "CAMPUS": " CUCSH",
+      "CARRERA": "LICENCIATURA EN CRIMINOLOGIA",
+      "ASPIRANTES": 186,
+      "ADMITIDOS": 100,
+      "NO ADMITIDOS": 86,
+      "CUPO": 100,
+      "% ADMISIÓN": 0.5376344086021505,
+      "PUNTAJE MÍNIMO": 120.8833
+    },
+    {
+      "CAMPUS": " CUCSH",
+      "CARRERA": "LICENCIATURA EN ESTUDIOS POLITICOS Y GOBIERNO",
+      "ASPIRANTES": 35,
+      "ADMITIDOS": 35,
+      "NO ADMITIDOS": 0,
+      "CUPO": 80,
+      "% ADMISIÓN": 1,
+      "PUNTAJE MÍNIMO": 95.9167
+    },
+    {
+      "CAMPUS": " CUCSH",
+      "CARRERA": "LICENCIATURA EN FILOSOFIA",
+      "ASPIRANTES": 34,
+      "ADMITIDOS": 34,
+      "NO ADMITIDOS": 0,
+      "CUPO": 60,
+      "% ADMISIÓN": 1,
+      "PUNTAJE MÍNIMO": 100.25
+    },
+    {
+      "CAMPUS": " CUCSH",
+      "CARRERA": "LICENCIATURA EN GEOGRAFIA",
+      "ASPIRANTES": 6,
+      "ADMITIDOS": 6,
+      "NO ADMITIDOS": 0,
+      "CUPO": 40,
+      "% ADMISIÓN": 1,
+      "PUNTAJE MÍNIMO": 115.7667
+    },
+    {
+      "CAMPUS": " CUCSH",
+      "CARRERA": "LICENCIATURA EN HISTORIA",
+      "ASPIRANTES": 36,
+      "ADMITIDOS": 36,
+      "NO ADMITIDOS": 0,
+      "CUPO": 70,
+      "% ADMISIÓN": 1,
+      "PUNTAJE MÍNIMO": 100.6433
+    },
+    {
+      "CAMPUS": " CUCSH",
+      "CARRERA": "LICENCIATURA EN LETRAS HISPANICAS",
+      "ASPIRANTES": 42,
+      "ADMITIDOS": 42,
+      "NO ADMITIDOS": 0,
+      "CUPO": 80,
+      "% ADMISIÓN": 1,
+      "PUNTAJE MÍNIMO": 97.3433
+    },
+    {
+      "CAMPUS": " CUCSH",
+      "CARRERA": "LICENCIATURA EN RELACIONES INTERNACIONALES",
+      "ASPIRANTES": 95,
+      "ADMITIDOS": 80,
+      "NO ADMITIDOS": 15,
+      "CUPO": 80,
+      "% ADMISIÓN": 0.8421052631578947,
+      "PUNTAJE MÍNIMO": 114.5533
+    },
+    {
+      "CAMPUS": " CUCSH",
+      "CARRERA": "LICENCIATURA EN SOCIOLOGIA",
+      "ASPIRANTES": 16,
+      "ADMITIDOS": 16,
+      "NO ADMITIDOS": 0,
+      "CUPO": 80,
+      "% ADMISIÓN": 1,
+      "PUNTAJE MÍNIMO": 89.5
+    },
+    {
+      "CAMPUS": " CUCSH",
+      "CARRERA": "LICENCIATURA EN TRABAJO SOCIAL (MODALIDAD ESCOLARIZADA)",
+      "ASPIRANTES": 100,
+      "ADMITIDOS": 100,
+      "NO ADMITIDOS": 0,
+      "CUPO": 153,
+      "% ADMISIÓN": 1,
+      "PUNTAJE MÍNIMO": 87.56
+    },
+    {
+      "CAMPUS": " CUCSH",
+      "CARRERA": "LICENCIATURA EN TRABAJO SOCIAL (NIVELACION)",
+      "ASPIRANTES": 20,
+      "ADMITIDOS": 20,
+      "NO ADMITIDOS": 0,
+      "CUPO": 20,
+      "% ADMISIÓN": 1,
+      "PUNTAJE MÍNIMO": 66
+    },
+    {
+      "CAMPUS": "CUGDL",
+      "CARRERA": "LICENCIATURA EN CIBERSEGURIDAD",
+      "ASPIRANTES": 131,
+      "ADMITIDOS": 90,
+      "NO ADMITIDOS": 41,
+      "CUPO": 90,
+      "% ADMISIÓN": 0.6870229007633588,
+      "PUNTAJE MÍNIMO": 122.94
+    },
+    {
+      "CAMPUS": "CUGDL",
+      "CARRERA": "LICENCIATURA EN CREATIVIDAD DIGITAL",
+      "ASPIRANTES": 246,
+      "ADMITIDOS": 150,
+      "NO ADMITIDOS": 96,
+      "CUPO": 150,
+      "% ADMISIÓN": 0.6097560975609756,
+      "PUNTAJE MÍNIMO": 135.6
+    },
+    {
+      "CAMPUS": "CUGDL",
+      "CARRERA": "LICENCIATURA EN INTELIGENCIA ARTIFICIAL Y CIENCIA DE LOS DATOS",
+      "ASPIRANTES": 184,
+      "ADMITIDOS": 120,
+      "NO ADMITIDOS": 64,
+      "CUPO": 120,
+      "% ADMISIÓN": 0.6521739130434783,
+      "PUNTAJE MÍNIMO": 136.4633
+    },
+    {
+      "CAMPUS": "CUGDL",
+      "CARRERA": "LICENCIATURA EN INTELIGENCIA FINANCIERA Y DE NEGOCIOS",
+      "ASPIRANTES": 169,
+      "ADMITIDOS": 120,
+      "NO ADMITIDOS": 49,
+      "CUPO": 120,
+      "% ADMISIÓN": 0.7100591715976331,
+      "PUNTAJE MÍNIMO": 124.5
+    },
+    {
+      "CAMPUS": "CUGDL",
+      "CARRERA": "LICENCIATURA EN TECNOLOGIAS BIOMEDICAS",
+      "ASPIRANTES": 79,
+      "ADMITIDOS": 60,
+      "NO ADMITIDOS": 19,
+      "CUPO": 60,
+      "% ADMISIÓN": 0.759493670886076,
+      "PUNTAJE MÍNIMO": 125.0633
+    },
+    {
+      "CAMPUS": "SEDE VIRTUAL CUGDL",
+      "CARRERA": "LICENCIATURA EN ADMINISTRACION DE LAS ORGANIZACIONES",
+      "ASPIRANTES": 113,
+      "ADMITIDOS": 113,
+      "NO ADMITIDOS": 0,
+      "CUPO": 200,
+      "% ADMISIÓN": 1,
+      "PUNTAJE MÍNIMO": 60
+    },
+    {
+      "CAMPUS": "SEDE VIRTUAL CUGDL",
+      "CARRERA": "LICENCIATURA EN BIBLIOTECOLOGIA Y GESTION DEL CONOCIMIENTO",
+      "ASPIRANTES": 26,
+      "ADMITIDOS": 26,
+      "NO ADMITIDOS": 0,
+      "CUPO": 100,
+      "% ADMISIÓN": 1,
+      "PUNTAJE MÍNIMO": 72
+    },
+    {
+      "CAMPUS": "SEDE VIRTUAL CUGDL",
+      "CARRERA": "LICENCIATURA EN DESARROLLO EDUCATIVO",
+      "ASPIRANTES": 34,
+      "ADMITIDOS": 34,
+      "NO ADMITIDOS": 0,
+      "CUPO": 100,
+      "% ADMISIÓN": 1,
+      "PUNTAJE MÍNIMO": 60
+    },
+    {
+      "CAMPUS": "SEDE VIRTUAL CUGDL",
+      "CARRERA": "LICENCIATURA EN GESTION CULTURAL",
+      "ASPIRANTES": 17,
+      "ADMITIDOS": 17,
+      "NO ADMITIDOS": 0,
+      "CUPO": 100,
+      "% ADMISIÓN": 1,
+      "PUNTAJE MÍNIMO": 60
+    },
+    {
+      "CAMPUS": "SEDE VIRTUAL CUGDL",
+      "CARRERA": "LICENCIATURA EN PERIODISMO DIGITAL",
+      "ASPIRANTES": 18,
+      "ADMITIDOS": 18,
+      "NO ADMITIDOS": 0,
+      "CUPO": 100,
+      "% ADMISIÓN": 1,
+      "PUNTAJE MÍNIMO": 60
+    },
+    {
+      "CAMPUS": "SEDE VIRTUAL CUGDL",
+      "CARRERA": "LICENCIATURA EN SEGURIDAD CIUDADANA",
+      "ASPIRANTES": 13,
+      "ADMITIDOS": 13,
+      "NO ADMITIDOS": 0,
+      "CUPO": 100,
+      "% ADMISIÓN": 1,
+      "PUNTAJE MÍNIMO": 60
+    },
+    {
+      "CAMPUS": "CHAPALA",
+      "CARRERA": "INGENIERIA EN ANIMACION Y TECNOLOGIAS CREATIVAS",
+      "ASPIRANTES": 1,
+      "ADMITIDOS": 1,
+      "NO ADMITIDOS": 0,
+      "CUPO": 70,
+      "% ADMISIÓN": 1,
+      "PUNTAJE MÍNIMO": 161.7967
+    },
+    {
+      "CAMPUS": "CHAPALA",
+      "CARRERA": "INGENIERIA EN DESARROLLO DE SOFTWARE",
+      "ASPIRANTES": 5,
+      "ADMITIDOS": 5,
+      "NO ADMITIDOS": 0,
+      "CUPO": 70,
+      "% ADMISIÓN": 1,
+      "PUNTAJE MÍNIMO": 101.9433
+    },
+    {
+      "CAMPUS": "CHAPALA",
+      "CARRERA": "LICENCIATURA EN ENFERMERIA",
+      "ASPIRANTES": 19,
+      "ADMITIDOS": 19,
+      "NO ADMITIDOS": 0,
+      "CUPO": 70,
+      "% ADMISIÓN": 1,
+      "PUNTAJE MÍNIMO": 86.33
+    },
+    {
+      "CAMPUS": "CHAPALA",
+      "CARRERA": "LICENCIATURA EN GERONTOLOGIA",
+      "ASPIRANTES": 7,
+      "ADMITIDOS": 7,
+      "NO ADMITIDOS": 0,
+      "CUPO": 70,
+      "% ADMISIÓN": 1,
+      "PUNTAJE MÍNIMO": 93.9167
+    },
+    {
+      "CAMPUS": "CHAPALA",
+      "CARRERA": "LICENCIATURA EN NEGOCIOS SOSTENIBLES",
+      "ASPIRANTES": 1,
+      "ADMITIDOS": 1,
+      "NO ADMITIDOS": 0,
+      "CUPO": 70,
+      "% ADMISIÓN": 1,
+      "PUNTAJE MÍNIMO": 125.9367
+    },
+    {
+      "CAMPUS": "CUCI ATOTONILCO",
+      "CARRERA": "ABOGADO",
+      "ASPIRANTES": 3,
+      "ADMITIDOS": 3,
+      "NO ADMITIDOS": 0,
+      "CUPO": 30,
+      "% ADMISIÓN": 1,
+      "PUNTAJE MÍNIMO": 125.5533
+    },
+    {
+      "CAMPUS": "CUCI ATOTONILCO",
+      "CARRERA": "LICENCIATURA EN ADMINISTRACION",
+      "ASPIRANTES": 7,
+      "ADMITIDOS": 7,
+      "NO ADMITIDOS": 0,
+      "CUPO": 30,
+      "% ADMISIÓN": 1,
+      "PUNTAJE MÍNIMO": 102.5833
+    },
+    {
+      "CAMPUS": "CUCI ATOTONILCO",
+      "CARRERA": "LICENCIATURA EN CONTADURIA PUBLICA",
+      "ASPIRANTES": 9,
+      "ADMITIDOS": 9,
+      "NO ADMITIDOS": 0,
+      "CUPO": 30,
+      "% ADMISIÓN": 1,
+      "PUNTAJE MÍNIMO": 111.75
+    },
+    {
+      "CAMPUS": "CUCI ATOTONILCO",
+      "CARRERA": "LICENCIATURA EN DESARROLLO TURISTICO SUSTENTABLE",
+      "ASPIRANTES": 1,
+      "ADMITIDOS": 1,
+      "NO ADMITIDOS": 0,
+      "CUPO": 30,
+      "% ADMISIÓN": 1,
+      "PUNTAJE MÍNIMO": 126.5
+    },
+    {
+      "CAMPUS": "CUCI ATOTONILCO",
+      "CARRERA": "LICENCIATURA EN PSICOLOGIA",
+      "ASPIRANTES": 10,
+      "ADMITIDOS": 10,
+      "NO ADMITIDOS": 0,
+      "CUPO": 35,
+      "% ADMISIÓN": 1,
+      "PUNTAJE MÍNIMO": 103.3333
+    },
+    {
+      "CAMPUS": "CUCI LA BARCA",
+      "CARRERA": "ABOGADO",
+      "ASPIRANTES": 2,
+      "ADMITIDOS": 2,
+      "NO ADMITIDOS": 0,
+      "CUPO": 30,
+      "% ADMISIÓN": 1,
+      "PUNTAJE MÍNIMO": 99
+    },
+    {
+      "CAMPUS": "CUCI LA BARCA",
+      "CARRERA": "LICENCIATURA EN ADMINISTRACION",
+      "ASPIRANTES": 3,
+      "ADMITIDOS": 3,
+      "NO ADMITIDOS": 0,
+      "CUPO": 30,
+      "% ADMISIÓN": 1,
+      "PUNTAJE MÍNIMO": 96.4167
+    },
+    {
+      "CAMPUS": "CUCI LA BARCA",
+      "CARRERA": "LICENCIATURA EN AGROBIOTECNOLOGIA",
+      "ASPIRANTES": 20,
+      "ADMITIDOS": 20,
+      "NO ADMITIDOS": 0,
+      "CUPO": 35,
+      "% ADMISIÓN": 1,
+      "PUNTAJE MÍNIMO": 96.1667
+    },
+    {
+      "CAMPUS": "CUCI LA BARCA",
+      "CARRERA": "LICENCIATURA EN AGRONEGOCIOS",
+      "ASPIRANTES": 9,
+      "ADMITIDOS": 9,
+      "NO ADMITIDOS": 0,
+      "CUPO": 30,
+      "% ADMISIÓN": 1,
+      "PUNTAJE MÍNIMO": 98.0833
+    },
+    {
+      "CAMPUS": "CUCI LA BARCA",
+      "CARRERA": "LICENCIATURA EN ENFERMERIA (NIVELACION)",
+      "ASPIRANTES": 17,
+      "ADMITIDOS": 17,
+      "NO ADMITIDOS": 0,
+      "CUPO": 30,
+      "% ADMISIÓN": 1,
+      "PUNTAJE MÍNIMO": 73.15
+    },
+    {
+      "CAMPUS": "CUCI OCOTLAN",
+      "CARRERA": "ABOGADO",
+      "ASPIRANTES": 35,
+      "ADMITIDOS": 35,
+      "NO ADMITIDOS": 0,
+      "CUPO": 40,
+      "% ADMISIÓN": 1,
+      "PUNTAJE MÍNIMO": 93.5
+    },
+    {
+      "CAMPUS": "CUCI OCOTLAN",
+      "CARRERA": "INGENIERIA EN COMPUTACION",
+      "ASPIRANTES": 12,
+      "ADMITIDOS": 12,
+      "NO ADMITIDOS": 0,
+      "CUPO": 40,
+      "% ADMISIÓN": 1,
+      "PUNTAJE MÍNIMO": 84.25
+    },
+    {
+      "CAMPUS": "CUCI OCOTLAN",
+      "CARRERA": "INGENIERIA INDUSTRIAL",
+      "ASPIRANTES": 47,
+      "ADMITIDOS": 40,
+      "NO ADMITIDOS": 7,
+      "CUPO": 40,
+      "% ADMISIÓN": 0.851063829787234,
+      "PUNTAJE MÍNIMO": 110.8333
+    },
+    {
+      "CAMPUS": "CUCI OCOTLAN",
+      "CARRERA": "INGENIERIA INFORMATICA",
+      "ASPIRANTES": 21,
+      "ADMITIDOS": 21,
+      "NO ADMITIDOS": 0,
+      "CUPO": 40,
+      "% ADMISIÓN": 1,
+      "PUNTAJE MÍNIMO": 92.67
+    },
+    {
+      "CAMPUS": "CUCI OCOTLAN",
+      "CARRERA": "INGENIERIA MECATRONICA",
+      "ASPIRANTES": 38,
+      "ADMITIDOS": 30,
+      "NO ADMITIDOS": 8,
+      "CUPO": 30,
+      "% ADMISIÓN": 0.7894736842105263,
+      "PUNTAJE MÍNIMO": 121.32
+    },
+    {
+      "CAMPUS": "CUCI OCOTLAN",
+      "CARRERA": "INGENIERIA QUIMICA",
+      "ASPIRANTES": 39,
+      "ADMITIDOS": 39,
+      "NO ADMITIDOS": 0,
+      "CUPO": 40,
+      "% ADMISIÓN": 1,
+      "PUNTAJE MÍNIMO": 97.0833
+    },
+    {
+      "CAMPUS": "CUCI OCOTLAN",
+      "CARRERA": "LICENCIATURA EN ADMINISTRACION",
+      "ASPIRANTES": 16,
+      "ADMITIDOS": 16,
+      "NO ADMITIDOS": 0,
+      "CUPO": 40,
+      "% ADMISIÓN": 1,
+      "PUNTAJE MÍNIMO": 102.1633
+    },
+    {
+      "CAMPUS": "CUCI OCOTLAN",
+      "CARRERA": "LICENCIATURA EN CONTADURIA PUBLICA",
+      "ASPIRANTES": 28,
+      "ADMITIDOS": 28,
+      "NO ADMITIDOS": 0,
+      "CUPO": 40,
+      "% ADMISIÓN": 1,
+      "PUNTAJE MÍNIMO": 95.76
+    },
+    {
+      "CAMPUS": "CUCI OCOTLAN",
+      "CARRERA": "LICENCIATURA EN ENFERMERIA",
+      "ASPIRANTES": 28,
+      "ADMITIDOS": 28,
+      "NO ADMITIDOS": 0,
+      "CUPO": 30,
+      "% ADMISIÓN": 1,
+      "PUNTAJE MÍNIMO": 108.2233
+    },
+    {
+      "CAMPUS": "CUCI OCOTLAN",
+      "CARRERA": "LICENCIATURA EN MERCADOTECNIA",
+      "ASPIRANTES": 19,
+      "ADMITIDOS": 19,
+      "NO ADMITIDOS": 0,
+      "CUPO": 40,
+      "% ADMISIÓN": 1,
+      "PUNTAJE MÍNIMO": 84.9167
+    },
+    {
+      "CAMPUS": "CUCI OCOTLAN",
+      "CARRERA": "LICENCIATURA EN NEGOCIOS INTERNACIONALES",
+      "ASPIRANTES": 57,
+      "ADMITIDOS": 40,
+      "NO ADMITIDOS": 17,
+      "CUPO": 40,
+      "% ADMISIÓN": 0.7017543859649122,
+      "PUNTAJE MÍNIMO": 113.4933
+    },
+    {
+      "CAMPUS": "CUCI OCOTLAN",
+      "CARRERA": "LICENCIATURA EN PSICOLOGIA",
+      "ASPIRANTES": 62,
+      "ADMITIDOS": 62,
+      "NO ADMITIDOS": 0,
+      "CUPO": 80,
+      "% ADMISIÓN": 1,
+      "PUNTAJE MÍNIMO": 90.3133
+    },
+    {
+      "CAMPUS": "CUCI OCOTLAN",
+      "CARRERA": "LICENCIATURA EN QUIMICO FARMACEUTICO BIOLOGO",
+      "ASPIRANTES": 102,
+      "ADMITIDOS": 60,
+      "NO ADMITIDOS": 42,
+      "CUPO": 60,
+      "% ADMISIÓN": 0.5882352941176471,
+      "PUNTAJE MÍNIMO": 131.0833
+    },
+    {
+      "CAMPUS": "CUCI OCOTLAN",
+      "CARRERA": "LICENCIATURA EN RECURSOS HUMANOS",
+      "ASPIRANTES": 13,
+      "ADMITIDOS": 13,
+      "NO ADMITIDOS": 0,
+      "CUPO": 40,
+      "% ADMISIÓN": 1,
+      "PUNTAJE MÍNIMO": 91.22
+    },
+    {
+      "CAMPUS": "CUCI OCOTLAN",
+      "CARRERA": "MEDICO CIRUJANO Y PARTERO",
+      "ASPIRANTES": 188,
+      "ADMITIDOS": 31,
+      "NO ADMITIDOS": 157,
+      "CUPO": 31,
+      "% ADMISIÓN": 0.16489361702127658,
+      "PUNTAJE MÍNIMO": 168.75
+    },
+    {
+      "CAMPUS": "CUCOSTA  ",
+      "CARRERA": "ABOGADO",
+      "ASPIRANTES": 81,
+      "ADMITIDOS": 81,
+      "NO ADMITIDOS": 0,
+      "CUPO": 86,
+      "% ADMISIÓN": 1,
+      "PUNTAJE MÍNIMO": 84.6667
+    },
+    {
+      "CAMPUS": "CUCOSTA  ",
+      "CARRERA": "INGENIERIA CIVIL",
+      "ASPIRANTES": 38,
+      "ADMITIDOS": 38,
+      "NO ADMITIDOS": 0,
+      "CUPO": 60,
+      "% ADMISIÓN": 1,
+      "PUNTAJE MÍNIMO": 95.97
+    },
+    {
+      "CAMPUS": "CUCOSTA  ",
+      "CARRERA": "INGENIERIA EN COMPUTACION",
+      "ASPIRANTES": 23,
+      "ADMITIDOS": 23,
+      "NO ADMITIDOS": 0,
+      "CUPO": 40,
+      "% ADMISIÓN": 1,
+      "PUNTAJE MÍNIMO": 91.2967
+    },
+    {
+      "CAMPUS": "CUCOSTA  ",
+      "CARRERA": "INGENIERIA EN TELEMATICA",
+      "ASPIRANTES": 16,
+      "ADMITIDOS": 16,
+      "NO ADMITIDOS": 0,
+      "CUPO": 25,
+      "% ADMISIÓN": 1,
+      "PUNTAJE MÍNIMO": 96.8333
+    },
+    {
+      "CAMPUS": "CUCOSTA  ",
+      "CARRERA": "INGENIERIA EN VIDEOJUEGOS",
+      "ASPIRANTES": 17,
+      "ADMITIDOS": 17,
+      "NO ADMITIDOS": 0,
+      "CUPO": 25,
+      "% ADMISIÓN": 1,
+      "PUNTAJE MÍNIMO": 90.75
+    },
+    {
+      "CAMPUS": "CUCOSTA  ",
+      "CARRERA": "LICENCIATURA  EN BIOLOGIA",
+      "ASPIRANTES": 36,
+      "ADMITIDOS": 36,
+      "NO ADMITIDOS": 0,
+      "CUPO": 40,
+      "% ADMISIÓN": 1,
+      "PUNTAJE MÍNIMO": 95.8333
+    },
+    {
+      "CAMPUS": "CUCOSTA  ",
+      "CARRERA": "LICENCIATURA EN ADMINISTRACION",
+      "ASPIRANTES": 72,
+      "ADMITIDOS": 72,
+      "NO ADMITIDOS": 0,
+      "CUPO": 80,
+      "% ADMISIÓN": 1,
+      "PUNTAJE MÍNIMO": 81.25
+    },
+    {
+      "CAMPUS": "CUCOSTA  ",
+      "CARRERA": "LICENCIATURA EN ARQUITECTURA",
+      "ASPIRANTES": 84,
+      "ADMITIDOS": 80,
+      "NO ADMITIDOS": 4,
+      "CUPO": 80,
+      "% ADMISIÓN": 0.9523809523809523,
+      "PUNTAJE MÍNIMO": 105.4567
+    },
+    {
+      "CAMPUS": "CUCOSTA  ",
+      "CARRERA": "LICENCIATURA EN ARTES VISUALES PARA LA EXPRESION FOTOGRAFICA",
+      "ASPIRANTES": 6,
+      "ADMITIDOS": 6,
+      "NO ADMITIDOS": 0,
+      "CUPO": 10,
+      "% ADMISIÓN": 1,
+      "PUNTAJE MÍNIMO": 92.0833
+    },
+    {
+      "CAMPUS": "CUCOSTA  ",
+      "CARRERA": "LICENCIATURA EN ARTES VISUALES PARA LA EXPRESION PLASTICA",
+      "ASPIRANTES": 18,
+      "ADMITIDOS": 18,
+      "NO ADMITIDOS": 0,
+      "CUPO": 21,
+      "% ADMISIÓN": 1,
+      "PUNTAJE MÍNIMO": 91.25
+    },
+    {
+      "CAMPUS": "CUCOSTA  ",
+      "CARRERA": "LICENCIATURA EN CIENCIAS Y ARTES CULINARIAS",
+      "ASPIRANTES": 38,
+      "ADMITIDOS": 30,
+      "NO ADMITIDOS": 8,
+      "CUPO": 30,
+      "% ADMISIÓN": 0.7894736842105263,
+      "PUNTAJE MÍNIMO": 122.4167
+    },
+    {
+      "CAMPUS": "CUCOSTA  ",
+      "CARRERA": "LICENCIATURA EN CONTADURIA PUBLICA",
+      "ASPIRANTES": 52,
+      "ADMITIDOS": 52,
+      "NO ADMITIDOS": 0,
+      "CUPO": 70,
+      "% ADMISIÓN": 1,
+      "PUNTAJE MÍNIMO": 97.78
+    },
+    {
+      "CAMPUS": "CUCOSTA  ",
+      "CARRERA": "LICENCIATURA EN CULTURA FISICA Y DEPORTES",
+      "ASPIRANTES": 30,
+      "ADMITIDOS": 30,
+      "NO ADMITIDOS": 0,
+      "CUPO": 40,
+      "% ADMISIÓN": 1,
+      "PUNTAJE MÍNIMO": 88.3767
+    },
+    {
+      "CAMPUS": "CUCOSTA  ",
+      "CARRERA": "LICENCIATURA EN DISEÑO PARA LA COMUNICACION GRAFICA",
+      "ASPIRANTES": 16,
+      "ADMITIDOS": 16,
+      "NO ADMITIDOS": 0,
+      "CUPO": 20,
+      "% ADMISIÓN": 1,
+      "PUNTAJE MÍNIMO": 91.49
+    },
+    {
+      "CAMPUS": "CUCOSTA  ",
+      "CARRERA": "LICENCIATURA EN ENFERMERIA",
+      "ASPIRANTES": 55,
+      "ADMITIDOS": 55,
+      "NO ADMITIDOS": 0,
+      "CUPO": 80,
+      "% ADMISIÓN": 1,
+      "PUNTAJE MÍNIMO": 88.9167
+    },
+    {
+      "CAMPUS": "CUCOSTA  ",
+      "CARRERA": "LICENCIATURA EN INGENIERIA EN COMUNICACION MULTIMEDIA",
+      "ASPIRANTES": 26,
+      "ADMITIDOS": 26,
+      "NO ADMITIDOS": 0,
+      "CUPO": 40,
+      "% ADMISIÓN": 1,
+      "PUNTAJE MÍNIMO": 91.6667
+    },
+    {
+      "CAMPUS": "CUCOSTA  ",
+      "CARRERA": "LICENCIATURA EN NUTRICION",
+      "ASPIRANTES": 56,
+      "ADMITIDOS": 42,
+      "NO ADMITIDOS": 14,
+      "CUPO": 42,
+      "% ADMISIÓN": 0.75,
+      "PUNTAJE MÍNIMO": 112.1833
+    },
+    {
+      "CAMPUS": "CUCOSTA  ",
+      "CARRERA": "LICENCIATURA EN PSICOLOGIA",
+      "ASPIRANTES": 92,
+      "ADMITIDOS": 90,
+      "NO ADMITIDOS": 2,
+      "CUPO": 90,
+      "% ADMISIÓN": 0.9782608695652174,
+      "PUNTAJE MÍNIMO": 99.3367
+    },
+    {
+      "CAMPUS": "CUCOSTA  ",
+      "CARRERA": "LICENCIATURA EN TURISMO",
+      "ASPIRANTES": 16,
+      "ADMITIDOS": 16,
+      "NO ADMITIDOS": 0,
+      "CUPO": 40,
+      "% ADMISIÓN": 1,
+      "PUNTAJE MÍNIMO": 91.0933
+    },
+    {
+      "CAMPUS": "CUCOSTA  ",
+      "CARRERA": "MEDICO CIRUJANO Y PARTERO",
+      "ASPIRANTES": 338,
+      "ADMITIDOS": 80,
+      "NO ADMITIDOS": 258,
+      "CUPO": 80,
+      "% ADMISIÓN": 0.23668639053254437,
+      "PUNTAJE MÍNIMO": 164.25
+    },
+    {
+      "CAMPUS": " CUCSUR AUTLAN",
+      "CARRERA": "ABOGADO",
+      "ASPIRANTES": 34,
+      "ADMITIDOS": 34,
+      "NO ADMITIDOS": 0,
+      "CUPO": 50,
+      "% ADMISIÓN": 1,
+      "PUNTAJE MÍNIMO": 86.2767
+    },
+    {
+      "CAMPUS": " CUCSUR AUTLAN",
+      "CARRERA": "INGENIERIA DE PROCESOS Y COMERCIO INTERNACIONAL",
+      "ASPIRANTES": 17,
+      "ADMITIDOS": 17,
+      "NO ADMITIDOS": 0,
+      "CUPO": 30,
+      "% ADMISIÓN": 1,
+      "PUNTAJE MÍNIMO": 99.0833
+    },
+    {
+      "CAMPUS": " CUCSUR AUTLAN",
+      "CARRERA": "INGENIERIA MECATRONICA",
+      "ASPIRANTES": 14,
+      "ADMITIDOS": 14,
+      "NO ADMITIDOS": 0,
+      "CUPO": 30,
+      "% ADMISIÓN": 1,
+      "PUNTAJE MÍNIMO": 109.0367
+    },
+    {
+      "CAMPUS": " CUCSUR AUTLAN",
+      "CARRERA": "INGENIERO AGRONOMO",
+      "ASPIRANTES": 82,
+      "ADMITIDOS": 82,
+      "NO ADMITIDOS": 0,
+      "CUPO": 82,
+      "% ADMISIÓN": 1,
+      "PUNTAJE MÍNIMO": 87.76
+    },
+    {
+      "CAMPUS": " CUCSUR AUTLAN",
+      "CARRERA": "LICENCIATURA EN ADMINISTRACION",
+      "ASPIRANTES": 26,
+      "ADMITIDOS": 26,
+      "NO ADMITIDOS": 0,
+      "CUPO": 35,
+      "% ADMISIÓN": 1,
+      "PUNTAJE MÍNIMO": 95.65
+    },
+    {
+      "CAMPUS": " CUCSUR AUTLAN",
+      "CARRERA": "LICENCIATURA EN ADMINISTRACION FINANCIERA Y SISTEMAS",
+      "ASPIRANTES": 12,
+      "ADMITIDOS": 12,
+      "NO ADMITIDOS": 0,
+      "CUPO": 25,
+      "% ADMISIÓN": 1,
+      "PUNTAJE MÍNIMO": 106.5267
+    },
+    {
+      "CAMPUS": " CUCSUR AUTLAN",
+      "CARRERA": "LICENCIATURA EN ARTES",
+      "ASPIRANTES": 7,
+      "ADMITIDOS": 7,
+      "NO ADMITIDOS": 0,
+      "CUPO": 25,
+      "% ADMISIÓN": 1,
+      "PUNTAJE MÍNIMO": 103.3867
+    },
+    {
+      "CAMPUS": " CUCSUR AUTLAN",
+      "CARRERA": "LICENCIATURA EN BIOLOGIA MARINA",
+      "ASPIRANTES": 25,
+      "ADMITIDOS": 25,
+      "NO ADMITIDOS": 0,
+      "CUPO": 35,
+      "% ADMISIÓN": 1,
+      "PUNTAJE MÍNIMO": 97.44
+    },
+    {
+      "CAMPUS": " CUCSUR AUTLAN",
+      "CARRERA": "LICENCIATURA EN CONTADURIA PUBLICA",
+      "ASPIRANTES": 21,
+      "ADMITIDOS": 21,
+      "NO ADMITIDOS": 0,
+      "CUPO": 35,
+      "% ADMISIÓN": 1,
+      "PUNTAJE MÍNIMO": 95.0833
+    },
+    {
+      "CAMPUS": " CUCSUR AUTLAN",
+      "CARRERA": "LICENCIATURA EN ENFERMERIA",
+      "ASPIRANTES": 48,
+      "ADMITIDOS": 48,
+      "NO ADMITIDOS": 0,
+      "CUPO": 50,
+      "% ADMISIÓN": 1,
+      "PUNTAJE MÍNIMO": 82.75
+    },
+    {
+      "CAMPUS": " CUCSUR AUTLAN",
+      "CARRERA": "LICENCIATURA EN INGENIERIA EN OBRAS Y SERVICIOS",
+      "ASPIRANTES": 18,
+      "ADMITIDOS": 18,
+      "NO ADMITIDOS": 0,
+      "CUPO": 20,
+      "% ADMISIÓN": 1,
+      "PUNTAJE MÍNIMO": 101.4167
+    },
+    {
+      "CAMPUS": " CUCSUR AUTLAN",
+      "CARRERA": "LICENCIATURA EN INGENIERIA EN RECURSOS NATURALES Y AGROPECUARIOS",
+      "ASPIRANTES": 8,
+      "ADMITIDOS": 8,
+      "NO ADMITIDOS": 0,
+      "CUPO": 30,
+      "% ADMISIÓN": 1,
+      "PUNTAJE MÍNIMO": 84.82
+    },
+    {
+      "CAMPUS": " CUCSUR AUTLAN",
+      "CARRERA": "LICENCIATURA EN INGENIERIA EN TELEINFORMATICA",
+      "ASPIRANTES": 5,
+      "ADMITIDOS": 5,
+      "NO ADMITIDOS": 0,
+      "CUPO": 25,
+      "% ADMISIÓN": 1,
+      "PUNTAJE MÍNIMO": 109.0333
+    },
+    {
+      "CAMPUS": " CUCSUR AUTLAN",
+      "CARRERA": "LICENCIATURA EN NUTRICION",
+      "ASPIRANTES": 31,
+      "ADMITIDOS": 31,
+      "NO ADMITIDOS": 0,
+      "CUPO": 50,
+      "% ADMISIÓN": 1,
+      "PUNTAJE MÍNIMO": 92.1767
+    },
+    {
+      "CAMPUS": " CUCSUR AUTLAN",
+      "CARRERA": "LICENCIATURA EN TURISMO",
+      "ASPIRANTES": 12,
+      "ADMITIDOS": 12,
+      "NO ADMITIDOS": 0,
+      "CUPO": 20,
+      "% ADMISIÓN": 1,
+      "PUNTAJE MÍNIMO": 98.4133
+    },
+    {
+      "CAMPUS": " CUCSUR AUTLAN",
+      "CARRERA": "TECNICO SUPERIOR UNIVERSITARIO EN ELECTRONICA Y MECANICA AUTOMOTRIZ",
+      "ASPIRANTES": 47,
+      "ADMITIDOS": 47,
+      "NO ADMITIDOS": 0,
+      "CUPO": 47,
+      "% ADMISIÓN": 1,
+      "PUNTAJE MÍNIMO": 86.38
+    },
+    {
+      "CAMPUS": "CUALTOS",
+      "CARRERA": "ABOGADO",
+      "ASPIRANTES": 53,
+      "ADMITIDOS": 44,
+      "NO ADMITIDOS": 9,
+      "CUPO": 44,
+      "% ADMISIÓN": 0.8301886792452831,
+      "PUNTAJE MÍNIMO": 115.37
+    },
+    {
+      "CAMPUS": "CUALTOS",
+      "CARRERA": "LICENCIATURA EN ADMINISTRACION",
+      "ASPIRANTES": 34,
+      "ADMITIDOS": 34,
+      "NO ADMITIDOS": 0,
+      "CUPO": 44,
+      "% ADMISIÓN": 1,
+      "PUNTAJE MÍNIMO": 101.4233
+    },
+    {
+      "CAMPUS": "CUALTOS",
+      "CARRERA": "LICENCIATURA EN CIRUJANO DENTISTA",
+      "ASPIRANTES": 211,
+      "ADMITIDOS": 44,
+      "NO ADMITIDOS": 167,
+      "CUPO": 44,
+      "% ADMISIÓN": 0.20853080568720378,
+      "PUNTAJE MÍNIMO": 159.8267
+    },
+    {
+      "CAMPUS": "CUALTOS",
+      "CARRERA": "LICENCIATURA EN CONTADURIA PUBLICA",
+      "ASPIRANTES": 53,
+      "ADMITIDOS": 44,
+      "NO ADMITIDOS": 9,
+      "CUPO": 44,
+      "% ADMISIÓN": 0.8301886792452831,
+      "PUNTAJE MÍNIMO": 120.9833
+    },
+    {
+      "CAMPUS": "CUALTOS",
+      "CARRERA": "LICENCIATURA EN ENFERMERIA",
+      "ASPIRANTES": 40,
+      "ADMITIDOS": 40,
+      "NO ADMITIDOS": 0,
+      "CUPO": 44,
+      "% ADMISIÓN": 1,
+      "PUNTAJE MÍNIMO": 83.7733
+    },
+    {
+      "CAMPUS": "CUALTOS",
+      "CARRERA": "LICENCIATURA EN MEDICINA VETERINARIA Y ZOOTECNIA",
+      "ASPIRANTES": 180,
+      "ADMITIDOS": 44,
+      "NO ADMITIDOS": 136,
+      "CUPO": 44,
+      "% ADMISIÓN": 0.24444444444444444,
+      "PUNTAJE MÍNIMO": 143.69
+    },
+    {
+      "CAMPUS": "CUALTOS",
+      "CARRERA": "LICENCIATURA EN NEGOCIOS INTERNACIONALES",
+      "ASPIRANTES": 53,
+      "ADMITIDOS": 44,
+      "NO ADMITIDOS": 9,
+      "CUPO": 44,
+      "% ADMISIÓN": 0.8301886792452831,
+      "PUNTAJE MÍNIMO": 116.87
+    },
+    {
+      "CAMPUS": "CUALTOS",
+      "CARRERA": "LICENCIATURA EN NUTRICION",
+      "ASPIRANTES": 65,
+      "ADMITIDOS": 44,
+      "NO ADMITIDOS": 21,
+      "CUPO": 44,
+      "% ADMISIÓN": 0.676923076923077,
+      "PUNTAJE MÍNIMO": 118.26
+    },
+    {
+      "CAMPUS": "CUALTOS",
+      "CARRERA": "LICENCIATURA EN PSICOLOGIA",
+      "ASPIRANTES": 110,
+      "ADMITIDOS": 44,
+      "NO ADMITIDOS": 66,
+      "CUPO": 44,
+      "% ADMISIÓN": 0.4,
+      "PUNTAJE MÍNIMO": 141.0133
+    },
+    {
+      "CAMPUS": "CUALTOS",
+      "CARRERA": "LICENCIATURA EN QUIMICO FARMACEUTICO BIOLOGO",
+      "ASPIRANTES": 65,
+      "ADMITIDOS": 44,
+      "NO ADMITIDOS": 21,
+      "CUPO": 44,
+      "% ADMISIÓN": 0.676923076923077,
+      "PUNTAJE MÍNIMO": 134.6767
+    },
+    {
+      "CAMPUS": "CUALTOS",
+      "CARRERA": "MEDICO CIRUJANO Y PARTERO",
+      "ASPIRANTES": 307,
+      "ADMITIDOS": 105,
+      "NO ADMITIDOS": 202,
+      "CUPO": 105,
+      "% ADMISIÓN": 0.34201954397394135,
+      "PUNTAJE MÍNIMO": 162.5833
+    },
+    {
+      "CAMPUS": "CULAGOS LAGOS DE MORENO",
+      "CARRERA": "ABOGADO",
+      "ASPIRANTES": 41,
+      "ADMITIDOS": 41,
+      "NO ADMITIDOS": 0,
+      "CUPO": 50,
+      "% ADMISIÓN": 1,
+      "PUNTAJE MÍNIMO": 92.4167
+    },
+    {
+      "CAMPUS": "CULAGOS LAGOS DE MORENO",
+      "CARRERA": "INGENIERIA BIOQUIMICA",
+      "ASPIRANTES": 18,
+      "ADMITIDOS": 18,
+      "NO ADMITIDOS": 0,
+      "CUPO": 50,
+      "% ADMISIÓN": 1,
+      "PUNTAJE MÍNIMO": 104.75
+    },
+    {
+      "CAMPUS": "CULAGOS LAGOS DE MORENO",
+      "CARRERA": "INGENIERIA INDUSTRIAL",
+      "ASPIRANTES": 20,
+      "ADMITIDOS": 20,
+      "NO ADMITIDOS": 0,
+      "CUPO": 25,
+      "% ADMISIÓN": 1,
+      "PUNTAJE MÍNIMO": 97.6667
+    },
+    {
+      "CAMPUS": "CULAGOS LAGOS DE MORENO",
+      "CARRERA": "INGENIERIA MECATRONICA",
+      "ASPIRANTES": 12,
+      "ADMITIDOS": 12,
+      "NO ADMITIDOS": 0,
+      "CUPO": 20,
+      "% ADMISIÓN": 1,
+      "PUNTAJE MÍNIMO": 83.4167
+    },
+    {
+      "CAMPUS": "CULAGOS LAGOS DE MORENO",
+      "CARRERA": "LICENCIATURA EN ADMINISTRACION",
+      "ASPIRANTES": 22,
+      "ADMITIDOS": 22,
+      "NO ADMITIDOS": 0,
+      "CUPO": 45,
+      "% ADMISIÓN": 1,
+      "PUNTAJE MÍNIMO": 104.1333
+    },
+    {
+      "CAMPUS": "CULAGOS LAGOS DE MORENO",
+      "CARRERA": "LICENCIATURA EN ENFERMERIA (NIVELACION)",
+      "ASPIRANTES": 4,
+      "ADMITIDOS": 4,
+      "NO ADMITIDOS": 0,
+      "CUPO": 25,
+      "% ADMISIÓN": 1,
+      "PUNTAJE MÍNIMO": 80
+    },
+    {
+      "CAMPUS": "CULAGOS LAGOS DE MORENO",
+      "CARRERA": "LICENCIATURA EN PSICOLOGIA",
+      "ASPIRANTES": 38,
+      "ADMITIDOS": 38,
+      "NO ADMITIDOS": 0,
+      "CUPO": 45,
+      "% ADMISIÓN": 1,
+      "PUNTAJE MÍNIMO": 94.0833
+    },
+    {
+      "CAMPUS": "CULAGOS SAN JUAN DE LOS LAGOS",
+      "CARRERA": "ABOGADO",
+      "ASPIRANTES": 14,
+      "ADMITIDOS": 14,
+      "NO ADMITIDOS": 0,
+      "CUPO": 25,
+      "% ADMISIÓN": 1,
+      "PUNTAJE MÍNIMO": 92.28
+    },
+    {
+      "CAMPUS": "CULAGOS SAN JUAN DE LOS LAGOS",
+      "CARRERA": "LICENCIATURA EN LENGUAS Y CULTURAS EXTRANJERAS",
+      "ASPIRANTES": 34,
+      "ADMITIDOS": 34,
+      "NO ADMITIDOS": 0,
+      "CUPO": 45,
+      "% ADMISIÓN": 1,
+      "PUNTAJE MÍNIMO": 90.19
+    },
+    {
+      "CAMPUS": "CUVALLES AMECA",
+      "CARRERA": "ABOGADO",
+      "ASPIRANTES": 65,
+      "ADMITIDOS": 60,
+      "NO ADMITIDOS": 5,
+      "CUPO": 60,
+      "% ADMISIÓN": 0.9230769230769231,
+      "PUNTAJE MÍNIMO": 100.4
+    },
+    {
+      "CAMPUS": "CUVALLES AMECA",
+      "CARRERA": "INGENIERIA EN DISEÑO MOLECULAR DE MATERIALES",
+      "ASPIRANTES": 5,
+      "ADMITIDOS": 5,
+      "NO ADMITIDOS": 0,
+      "CUPO": 20,
+      "% ADMISIÓN": 1,
+      "PUNTAJE MÍNIMO": 97.2333
+    },
+    {
+      "CAMPUS": "CUVALLES AMECA",
+      "CARRERA": "INGENIERIA EN ELECTRONICA Y COMPUTACION",
+      "ASPIRANTES": 27,
+      "ADMITIDOS": 27,
+      "NO ADMITIDOS": 0,
+      "CUPO": 35,
+      "% ADMISIÓN": 1,
+      "PUNTAJE MÍNIMO": 77.67
+    },
+    {
+      "CAMPUS": "CUVALLES AMECA",
+      "CARRERA": "INGENIERIA EN SISTEMAS BIOLOGICOS",
+      "ASPIRANTES": 7,
+      "ADMITIDOS": 7,
+      "NO ADMITIDOS": 0,
+      "CUPO": 20,
+      "% ADMISIÓN": 1,
+      "PUNTAJE MÍNIMO": 101.4067
+    },
+    {
+      "CAMPUS": "CUVALLES AMECA",
+      "CARRERA": "INGENIERIA MECATRONICA",
+      "ASPIRANTES": 38,
+      "ADMITIDOS": 35,
+      "NO ADMITIDOS": 3,
+      "CUPO": 35,
+      "% ADMISIÓN": 0.9210526315789473,
+      "PUNTAJE MÍNIMO": 106.7733
+    },
+    {
+      "CAMPUS": "CUVALLES AMECA",
+      "CARRERA": "LICENCIATURA EN ADMINISTRACION",
+      "ASPIRANTES": 45,
+      "ADMITIDOS": 40,
+      "NO ADMITIDOS": 5,
+      "CUPO": 40,
+      "% ADMISIÓN": 0.8888888888888888,
+      "PUNTAJE MÍNIMO": 105.3933
+    },
+    {
+      "CAMPUS": "CUVALLES AMECA",
+      "CARRERA": "LICENCIATURA EN AGRONEGOCIOS",
+      "ASPIRANTES": 28,
+      "ADMITIDOS": 28,
+      "NO ADMITIDOS": 0,
+      "CUPO": 30,
+      "% ADMISIÓN": 1,
+      "PUNTAJE MÍNIMO": 94.23
+    },
+    {
+      "CAMPUS": "CUVALLES AMECA",
+      "CARRERA": "LICENCIATURA EN CONTADURIA PUBLICA",
+      "ASPIRANTES": 80,
+      "ADMITIDOS": 70,
+      "NO ADMITIDOS": 10,
+      "CUPO": 70,
+      "% ADMISIÓN": 0.875,
+      "PUNTAJE MÍNIMO": 109.8333
+    },
+    {
+      "CAMPUS": "CUVALLES AMECA",
+      "CARRERA": "LICENCIATURA EN EDUCACION",
+      "ASPIRANTES": 81,
+      "ADMITIDOS": 80,
+      "NO ADMITIDOS": 1,
+      "CUPO": 80,
+      "% ADMISIÓN": 0.9876543209876543,
+      "PUNTAJE MÍNIMO": 87.1567
+    },
+    {
+      "CAMPUS": "CUVALLES AMECA",
+      "CARRERA": "LICENCIATURA EN ENFERMERIA",
+      "ASPIRANTES": 138,
+      "ADMITIDOS": 80,
+      "NO ADMITIDOS": 58,
+      "CUPO": 80,
+      "% ADMISIÓN": 0.5797101449275363,
+      "PUNTAJE MÍNIMO": 114.5233
+    },
+    {
+      "CAMPUS": "CUVALLES AMECA",
+      "CARRERA": "LICENCIATURA EN GERONTOLOGIA",
+      "ASPIRANTES": 19,
+      "ADMITIDOS": 19,
+      "NO ADMITIDOS": 0,
+      "CUPO": 30,
+      "% ADMISIÓN": 1,
+      "PUNTAJE MÍNIMO": 102.8
+    },
+    {
+      "CAMPUS": "CUVALLES AMECA",
+      "CARRERA": "LICENCIATURA EN INGENIERIA EN AUTOMATIZACION INDUSTRIAL",
+      "ASPIRANTES": 9,
+      "ADMITIDOS": 9,
+      "NO ADMITIDOS": 0,
+      "CUPO": 25,
+      "% ADMISIÓN": 1,
+      "PUNTAJE MÍNIMO": 103.4533
+    },
+    {
+      "CAMPUS": "CUVALLES AMECA",
+      "CARRERA": "LICENCIATURA EN NUTRICION",
+      "ASPIRANTES": 64,
+      "ADMITIDOS": 64,
+      "NO ADMITIDOS": 0,
+      "CUPO": 70,
+      "% ADMISIÓN": 1,
+      "PUNTAJE MÍNIMO": 85.91
+    },
+    {
+      "CAMPUS": "CUVALLES AMECA",
+      "CARRERA": "LICENCIATURA EN PSICOLOGIA",
+      "ASPIRANTES": 119,
+      "ADMITIDOS": 80,
+      "NO ADMITIDOS": 39,
+      "CUPO": 80,
+      "% ADMISIÓN": 0.6722689075630253,
+      "PUNTAJE MÍNIMO": 112.51
+    },
+    {
+      "CAMPUS": "CUVALLES AMECA",
+      "CARRERA": "LICENCIATURA EN QUIMICO FARMACEUTICO BIOLOGO",
+      "ASPIRANTES": 78,
+      "ADMITIDOS": 70,
+      "NO ADMITIDOS": 8,
+      "CUPO": 70,
+      "% ADMISIÓN": 0.8974358974358975,
+      "PUNTAJE MÍNIMO": 114
+    },
+    {
+      "CAMPUS": "CUVALLES AMECA",
+      "CARRERA": "LICENCIATURA EN TECNOLOGIAS DE LA INFORMACION",
+      "ASPIRANTES": 11,
+      "ADMITIDOS": 11,
+      "NO ADMITIDOS": 0,
+      "CUPO": 20,
+      "% ADMISIÓN": 1,
+      "PUNTAJE MÍNIMO": 90.8433
+    },
+    {
+      "CAMPUS": "CUVALLES AMECA",
+      "CARRERA": "LICENCIATURA EN TRABAJO SOCIAL",
+      "ASPIRANTES": 20,
+      "ADMITIDOS": 20,
+      "NO ADMITIDOS": 0,
+      "CUPO": 30,
+      "% ADMISIÓN": 1,
+      "PUNTAJE MÍNIMO": 88.2933
+    },
+    {
+      "CAMPUS": "CUVALLES AMECA",
+      "CARRERA": "LICENCIATURA EN TURISMO",
+      "ASPIRANTES": 16,
+      "ADMITIDOS": 16,
+      "NO ADMITIDOS": 0,
+      "CUPO": 30,
+      "% ADMISIÓN": 1,
+      "PUNTAJE MÍNIMO": 94.7033
+    },
+    {
+      "CAMPUS": "CUVALLES AMECA",
+      "CARRERA": "MEDICO CIRUJANO Y PARTERO",
+      "ASPIRANTES": 335,
+      "ADMITIDOS": 80,
+      "NO ADMITIDOS": 255,
+      "CUPO": 80,
+      "% ADMISIÓN": 0.23880597014925373,
+      "PUNTAJE MÍNIMO": 165.3
+    },
+    {
+      "CAMPUS": "CUNORTE COLOTLAN",
+      "CARRERA": "ABOGADO",
+      "ASPIRANTES": 14,
+      "ADMITIDOS": 14,
+      "NO ADMITIDOS": 0,
+      "CUPO": 40,
+      "% ADMISIÓN": 1,
+      "PUNTAJE MÍNIMO": 98.0933
+    },
+    {
+      "CAMPUS": "CUNORTE COLOTLAN",
+      "CARRERA": "INGENIERIA EN ELECTRONICA Y COMPUTACION",
+      "ASPIRANTES": 4,
+      "ADMITIDOS": 4,
+      "NO ADMITIDOS": 0,
+      "CUPO": 40,
+      "% ADMISIÓN": 1,
+      "PUNTAJE MÍNIMO": 109.6233
+    },
+    {
+      "CAMPUS": "CUNORTE COLOTLAN",
+      "CARRERA": "INGENIERIA MECANICA ELECTRICA",
+      "ASPIRANTES": 3,
+      "ADMITIDOS": 3,
+      "NO ADMITIDOS": 0,
+      "CUPO": 40,
+      "% ADMISIÓN": 1,
+      "PUNTAJE MÍNIMO": 120.6667
+    },
+    {
+      "CAMPUS": "CUNORTE COLOTLAN",
+      "CARRERA": "LICENCIATURA EN ADMINISTRACION",
+      "ASPIRANTES": 11,
+      "ADMITIDOS": 11,
+      "NO ADMITIDOS": 0,
+      "CUPO": 40,
+      "% ADMISIÓN": 1,
+      "PUNTAJE MÍNIMO": 83.0833
+    },
+    {
+      "CAMPUS": "CUNORTE COLOTLAN",
+      "CARRERA": "LICENCIATURA EN AGRONEGOCIOS",
+      "ASPIRANTES": 5,
+      "ADMITIDOS": 5,
+      "NO ADMITIDOS": 0,
+      "CUPO": 40,
+      "% ADMISIÓN": 1,
+      "PUNTAJE MÍNIMO": 78.6667
+    },
+    {
+      "CAMPUS": "CUNORTE COLOTLAN",
+      "CARRERA": "LICENCIATURA EN CONTADURIA PUBLICA",
+      "ASPIRANTES": 5,
+      "ADMITIDOS": 5,
+      "NO ADMITIDOS": 0,
+      "CUPO": 40,
+      "% ADMISIÓN": 1,
+      "PUNTAJE MÍNIMO": 99.1667
+    },
+    {
+      "CAMPUS": "CUNORTE COLOTLAN",
+      "CARRERA": "LICENCIATURA EN EDUCACION",
+      "ASPIRANTES": 33,
+      "ADMITIDOS": 33,
+      "NO ADMITIDOS": 0,
+      "CUPO": 40,
+      "% ADMISIÓN": 1,
+      "PUNTAJE MÍNIMO": 85.5833
+    },
+    {
+      "CAMPUS": "CUNORTE COLOTLAN",
+      "CARRERA": "LICENCIATURA EN ENFERMERIA",
+      "ASPIRANTES": 29,
+      "ADMITIDOS": 29,
+      "NO ADMITIDOS": 0,
+      "CUPO": 40,
+      "% ADMISIÓN": 1,
+      "PUNTAJE MÍNIMO": 83.5833
+    },
+    {
+      "CAMPUS": "CUNORTE COLOTLAN",
+      "CARRERA": "LICENCIATURA EN ENFERMERIA (NIVELACION)",
+      "ASPIRANTES": 5,
+      "ADMITIDOS": 5,
+      "NO ADMITIDOS": 0,
+      "CUPO": 40,
+      "% ADMISIÓN": 1,
+      "PUNTAJE MÍNIMO": 70
+    },
+    {
+      "CAMPUS": "CUNORTE COLOTLAN",
+      "CARRERA": "LICENCIATURA EN INGENIERIA EN MANEJO DE RECURSOS NATURALES",
+      "ASPIRANTES": 2,
+      "ADMITIDOS": 2,
+      "NO ADMITIDOS": 0,
+      "CUPO": 40,
+      "% ADMISIÓN": 1,
+      "PUNTAJE MÍNIMO": 117.6967
+    },
+    {
+      "CAMPUS": "CUNORTE COLOTLAN",
+      "CARRERA": "LICENCIATURA EN NUTRICION",
+      "ASPIRANTES": 4,
+      "ADMITIDOS": 4,
+      "NO ADMITIDOS": 0,
+      "CUPO": 40,
+      "% ADMISIÓN": 1,
+      "PUNTAJE MÍNIMO": 89.19
+    },
+    {
+      "CAMPUS": "CUNORTE COLOTLAN",
+      "CARRERA": "LICENCIATURA EN PSICOLOGIA",
+      "ASPIRANTES": 14,
+      "ADMITIDOS": 14,
+      "NO ADMITIDOS": 0,
+      "CUPO": 40,
+      "% ADMISIÓN": 1,
+      "PUNTAJE MÍNIMO": 81.5
+    },
+    {
+      "CAMPUS": "CUSUR CD. GUZMAN",
+      "CARRERA": "ABOGADO",
+      "ASPIRANTES": 72,
+      "ADMITIDOS": 72,
+      "NO ADMITIDOS": 0,
+      "CUPO": 80,
+      "% ADMISIÓN": 1,
+      "PUNTAJE MÍNIMO": 86.3333
+    },
+    {
+      "CAMPUS": "CUSUR CD. GUZMAN",
+      "CARRERA": "CARRERA EN ENFERMERIA (NIVEL TECNICO)",
+      "ASPIRANTES": 6,
+      "ADMITIDOS": 6,
+      "NO ADMITIDOS": 0,
+      "CUPO": 25,
+      "% ADMISIÓN": 1,
+      "PUNTAJE MÍNIMO": 106.6667
+    },
+    {
+      "CAMPUS": "CUSUR CD. GUZMAN",
+      "CARRERA": "INGENIERIA EN TELEMATICA",
+      "ASPIRANTES": 20,
+      "ADMITIDOS": 20,
+      "NO ADMITIDOS": 0,
+      "CUPO": 40,
+      "% ADMISIÓN": 1,
+      "PUNTAJE MÍNIMO": 97.21
+    },
+    {
+      "CAMPUS": "CUSUR CD. GUZMAN",
+      "CARRERA": "LICENCIATURA EN AGROBIOTECNOLOGIA",
+      "ASPIRANTES": 41,
+      "ADMITIDOS": 41,
+      "NO ADMITIDOS": 0,
+      "CUPO": 41,
+      "% ADMISIÓN": 1,
+      "PUNTAJE MÍNIMO": 86.3933
+    },
+    {
+      "CAMPUS": "CUSUR CD. GUZMAN",
+      "CARRERA": "LICENCIATURA EN AGRONEGOCIOS",
+      "ASPIRANTES": 70,
+      "ADMITIDOS": 70,
+      "NO ADMITIDOS": 0,
+      "CUPO": 80,
+      "% ADMISIÓN": 1,
+      "PUNTAJE MÍNIMO": 76.8333
+    },
+    {
+      "CAMPUS": "CUSUR CD. GUZMAN",
+      "CARRERA": "LICENCIATURA EN CIRUJANO DENTISTA",
+      "ASPIRANTES": 214,
+      "ADMITIDOS": 35,
+      "NO ADMITIDOS": 179,
+      "CUPO": 35,
+      "% ADMISIÓN": 0.16355140186915887,
+      "PUNTAJE MÍNIMO": 159.8
+    },
+    {
+      "CAMPUS": "CUSUR CD. GUZMAN",
+      "CARRERA": "LICENCIATURA EN CULTURA FISICA Y DEPORTES",
+      "ASPIRANTES": 68,
+      "ADMITIDOS": 40,
+      "NO ADMITIDOS": 28,
+      "CUPO": 40,
+      "% ADMISIÓN": 0.5882352941176471,
+      "PUNTAJE MÍNIMO": 112.1933
+    },
+    {
+      "CAMPUS": "CUSUR CD. GUZMAN",
+      "CARRERA": "LICENCIATURA EN DESARROLLO TURISTICO SUSTENTABLE",
+      "ASPIRANTES": 11,
+      "ADMITIDOS": 11,
+      "NO ADMITIDOS": 0,
+      "CUPO": 30,
+      "% ADMISIÓN": 1,
+      "PUNTAJE MÍNIMO": 84.1067
+    },
+    {
+      "CAMPUS": "CUSUR CD. GUZMAN",
+      "CARRERA": "LICENCIATURA EN ENFERMERIA",
+      "ASPIRANTES": 119,
+      "ADMITIDOS": 90,
+      "NO ADMITIDOS": 29,
+      "CUPO": 90,
+      "% ADMISIÓN": 0.7563025210084033,
+      "PUNTAJE MÍNIMO": 111.46
+    },
+    {
+      "CAMPUS": "CUSUR CD. GUZMAN",
+      "CARRERA": "LICENCIATURA EN MEDICINA VETERINARIA Y ZOOTECNIA",
+      "ASPIRANTES": 203,
+      "ADMITIDOS": 80,
+      "NO ADMITIDOS": 123,
+      "CUPO": 80,
+      "% ADMISIÓN": 0.39408866995073893,
+      "PUNTAJE MÍNIMO": 129.5
+    },
+    {
+      "CAMPUS": "CUSUR CD. GUZMAN",
+      "CARRERA": "LICENCIATURA EN NEGOCIOS INTERNACIONALES",
+      "ASPIRANTES": 122,
+      "ADMITIDOS": 80,
+      "NO ADMITIDOS": 42,
+      "CUPO": 80,
+      "% ADMISIÓN": 0.6557377049180327,
+      "PUNTAJE MÍNIMO": 122
+    },
+    {
+      "CAMPUS": "CUSUR CD. GUZMAN",
+      "CARRERA": "LICENCIATURA EN NUTRICION",
+      "ASPIRANTES": 95,
+      "ADMITIDOS": 65,
+      "NO ADMITIDOS": 30,
+      "CUPO": 65,
+      "% ADMISIÓN": 0.6842105263157895,
+      "PUNTAJE MÍNIMO": 112.5
+    },
+    {
+      "CAMPUS": "CUSUR CD. GUZMAN",
+      "CARRERA": "LICENCIATURA EN PSICOLOGIA",
+      "ASPIRANTES": 112,
+      "ADMITIDOS": 80,
+      "NO ADMITIDOS": 32,
+      "CUPO": 80,
+      "% ADMISIÓN": 0.7142857142857143,
+      "PUNTAJE MÍNIMO": 113.53
+    },
+    {
+      "CAMPUS": "CUSUR CD. GUZMAN",
+      "CARRERA": "LICENCIATURA EN SEGURIDAD LABORAL, PROTECCION CIVIL Y EMERGENCIAS",
+      "ASPIRANTES": 31,
+      "ADMITIDOS": 31,
+      "NO ADMITIDOS": 0,
+      "CUPO": 35,
+      "% ADMISIÓN": 1,
+      "PUNTAJE MÍNIMO": 89.9167
+    },
+    {
+      "CAMPUS": "CUSUR CD. GUZMAN",
+      "CARRERA": "LICENCIATURA EN TRABAJO SOCIAL (MODALIDAD MIXTA)",
+      "ASPIRANTES": 17,
+      "ADMITIDOS": 17,
+      "NO ADMITIDOS": 0,
+      "CUPO": 40,
+      "% ADMISIÓN": 1,
+      "PUNTAJE MÍNIMO": 90.8333
+    },
+    {
+      "CAMPUS": "CUSUR CD. GUZMAN",
+      "CARRERA": "MEDICO CIRUJANO Y PARTERO",
+      "ASPIRANTES": 364,
+      "ADMITIDOS": 60,
+      "NO ADMITIDOS": 304,
+      "CUPO": 60,
+      "% ADMISIÓN": 0.16483516483516483,
+      "PUNTAJE MÍNIMO": 173.25
+    },
+    {
+      "CAMPUS": "CUTLAQUE",
+      "CARRERA": "ABOGADO",
+      "ASPIRANTES": 127,
+      "ADMITIDOS": 127,
+      "NO ADMITIDOS": 0,
+      "CUPO": 127,
+      "% ADMISIÓN": 1,
+      "PUNTAJE MÍNIMO": 89.6067
+    },
+    {
+      "CAMPUS": "CUTLAQUE",
+      "CARRERA": "INGENIERIA EN NEGOCIOS",
+      "ASPIRANTES": 39,
+      "ADMITIDOS": 39,
+      "NO ADMITIDOS": 0,
+      "CUPO": 40,
+      "% ADMISIÓN": 1,
+      "PUNTAJE MÍNIMO": 95.9
+    },
+    {
+      "CAMPUS": "CUTLAQUE",
+      "CARRERA": "INGENIERIA INDUSTRIAL",
+      "ASPIRANTES": 59,
+      "ADMITIDOS": 40,
+      "NO ADMITIDOS": 19,
+      "CUPO": 40,
+      "% ADMISIÓN": 0.6779661016949152,
+      "PUNTAJE MÍNIMO": 122.1067
+    },
+    {
+      "CAMPUS": "CUTLAQUE",
+      "CARRERA": "INGENIERIA INFORMATICA",
+      "ASPIRANTES": 48,
+      "ADMITIDOS": 48,
+      "NO ADMITIDOS": 0,
+      "CUPO": 48,
+      "% ADMISIÓN": 1,
+      "PUNTAJE MÍNIMO": 100.93
+    },
+    {
+      "CAMPUS": "CUTLAQUE",
+      "CARRERA": "LICENCIATURA EN TURISMO",
+      "ASPIRANTES": 15,
+      "ADMITIDOS": 15,
+      "NO ADMITIDOS": 0,
+      "CUPO": 40,
+      "% ADMISIÓN": 1,
+      "PUNTAJE MÍNIMO": 101.3333
+    },
+    {
+      "CAMPUS": "CUTLAJO",
+      "CARRERA": "INGENIERIA BIOMEDICA",
+      "ASPIRANTES": 36,
+      "ADMITIDOS": 36,
+      "NO ADMITIDOS": 0,
+      "CUPO": 40,
+      "% ADMISIÓN": 1,
+      "PUNTAJE MÍNIMO": 101.6667
+    },
+    {
+      "CAMPUS": "CUTLAJO",
+      "CARRERA": "INGENIERIA CIVIL",
+      "ASPIRANTES": 81,
+      "ADMITIDOS": 80,
+      "NO ADMITIDOS": 1,
+      "CUPO": 80,
+      "% ADMISIÓN": 0.9876543209876543,
+      "PUNTAJE MÍNIMO": 94.23
+    },
+    {
+      "CAMPUS": "CUTLAJO",
+      "CARRERA": "INGENIERIA EN DISEÑO INDUSTRIAL",
+      "ASPIRANTES": 43,
+      "ADMITIDOS": 25,
+      "NO ADMITIDOS": 18,
+      "CUPO": 25,
+      "% ADMISIÓN": 0.5813953488372093,
+      "PUNTAJE MÍNIMO": 129.3233
+    },
+    {
+      "CAMPUS": "CUTLAJO",
+      "CARRERA": "INGENIERIA MECATRONICA DUAL",
+      "ASPIRANTES": 68,
+      "ADMITIDOS": 25,
+      "NO ADMITIDOS": 43,
+      "CUPO": 25,
+      "% ADMISIÓN": 0.36764705882352944,
+      "PUNTAJE MÍNIMO": 141.8833
+    },
+    {
+      "CAMPUS": "CUTLAJO",
+      "CARRERA": "LICENCIATURA EN ADMINISTRACION",
+      "ASPIRANTES": 77,
+      "ADMITIDOS": 77,
+      "NO ADMITIDOS": 0,
+      "CUPO": 80,
+      "% ADMISIÓN": 1,
+      "PUNTAJE MÍNIMO": 85.71
+    },
+    {
+      "CAMPUS": "CUTLAJO",
+      "CARRERA": "LICENCIATURA EN CIENCIAS AMBIENTALES Y DEL TERRITORIO",
+      "ASPIRANTES": 3,
+      "ADMITIDOS": 3,
+      "NO ADMITIDOS": 0,
+      "CUPO": 25,
+      "% ADMISIÓN": 1,
+      "PUNTAJE MÍNIMO": 139.5167
+    },
+    {
+      "CAMPUS": "CUTLAJO",
+      "CARRERA": "LICENCIATURA EN CIRUJANO DENTISTA",
+      "ASPIRANTES": 176,
+      "ADMITIDOS": 30,
+      "NO ADMITIDOS": 146,
+      "CUPO": 30,
+      "% ADMISIÓN": 0.17045454545454544,
+      "PUNTAJE MÍNIMO": 151.8167
+    },
+    {
+      "CAMPUS": "CUTLAJO",
+      "CARRERA": "LICENCIATURA EN CONSTRUCCION DE LA PAZ Y SEGURIDAD",
+      "ASPIRANTES": 3,
+      "ADMITIDOS": 3,
+      "NO ADMITIDOS": 0,
+      "CUPO": 25,
+      "% ADMISIÓN": 1,
+      "PUNTAJE MÍNIMO": 98.7533
+    },
+    {
+      "CAMPUS": "CUTLAJO",
+      "CARRERA": "LICENCIATURA EN ENFERMERIA",
+      "ASPIRANTES": 146,
+      "ADMITIDOS": 80,
+      "NO ADMITIDOS": 66,
+      "CUPO": 80,
+      "% ADMISIÓN": 0.547945205479452,
+      "PUNTAJE MÍNIMO": 114.8867
+    },
+    {
+      "CAMPUS": "CUTLAJO",
+      "CARRERA": "LICENCIATURA EN NEGOCIOS INTERNACIONALES",
+      "ASPIRANTES": 84,
+      "ADMITIDOS": 80,
+      "NO ADMITIDOS": 4,
+      "CUPO": 80,
+      "% ADMISIÓN": 0.9523809523809523,
+      "PUNTAJE MÍNIMO": 102.7367
+    },
+    {
+      "CAMPUS": "CUTLAJO",
+      "CARRERA": "LICENCIATURA EN NUTRICION",
+      "ASPIRANTES": 112,
+      "ADMITIDOS": 80,
+      "NO ADMITIDOS": 32,
+      "CUPO": 80,
+      "% ADMISIÓN": 0.7142857142857143,
+      "PUNTAJE MÍNIMO": 113.7133
+    },
+    {
+      "CAMPUS": "CUTLAJO",
+      "CARRERA": "LICENCIATURA EN PSICOLOGIA",
+      "ASPIRANTES": 111,
+      "ADMITIDOS": 80,
+      "NO ADMITIDOS": 31,
+      "CUPO": 80,
+      "% ADMISIÓN": 0.7207207207207207,
+      "PUNTAJE MÍNIMO": 119.0233
+    },
+    {
+      "CAMPUS": "CUTLAJO",
+      "CARRERA": "LICENCIATURA EN TERAPIA FISICA",
+      "ASPIRANTES": 127,
+      "ADMITIDOS": 90,
+      "NO ADMITIDOS": 37,
+      "CUPO": 90,
+      "% ADMISIÓN": 0.7086614173228346,
+      "PUNTAJE MÍNIMO": 115.0867
+    },
+    {
+      "CAMPUS": "CUTLAJO",
+      "CARRERA": "MEDICO CIRUJANO Y PARTERO",
+      "ASPIRANTES": 487,
+      "ADMITIDOS": 80,
+      "NO ADMITIDOS": 407,
+      "CUPO": 80,
+      "% ADMISIÓN": 0.16427104722792607,
+      "PUNTAJE MÍNIMO": 171.3533
+    },
+    {
+      "CAMPUS": "CUTONALA",
+      "CARRERA": "ABOGADO",
+      "ASPIRANTES": 279,
+      "ADMITIDOS": 180,
+      "NO ADMITIDOS": 99,
+      "CUPO": 180,
+      "% ADMISIÓN": 0.6451612903225806,
+      "PUNTAJE MÍNIMO": 115.6133
+    },
+    {
+      "CAMPUS": "CUTONALA",
+      "CARRERA": "INGENIERIA EN CIENCIAS COMPUTACIONALES",
+      "ASPIRANTES": 105,
+      "ADMITIDOS": 90,
+      "NO ADMITIDOS": 15,
+      "CUPO": 90,
+      "% ADMISIÓN": 0.8571428571428571,
+      "PUNTAJE MÍNIMO": 112.0167
+    },
+    {
+      "CAMPUS": "CUTONALA",
+      "CARRERA": "INGENIERIA EN ENERGIA",
+      "ASPIRANTES": 37,
+      "ADMITIDOS": 37,
+      "NO ADMITIDOS": 0,
+      "CUPO": 60,
+      "% ADMISIÓN": 1,
+      "PUNTAJE MÍNIMO": 88.7333
+    },
+    {
+      "CAMPUS": "CUTONALA",
+      "CARRERA": "INGENIERIA EN NANOTECNOLOGIA",
+      "ASPIRANTES": 35,
+      "ADMITIDOS": 35,
+      "NO ADMITIDOS": 0,
+      "CUPO": 90,
+      "% ADMISIÓN": 1,
+      "PUNTAJE MÍNIMO": 97.3867
+    },
+    {
+      "CAMPUS": "CUTONALA",
+      "CARRERA": "LICENCIATURA EN ADMINISTRACION DE NEGOCIOS",
+      "ASPIRANTES": 140,
+      "ADMITIDOS": 120,
+      "NO ADMITIDOS": 20,
+      "CUPO": 120,
+      "% ADMISIÓN": 0.8571428571428571,
+      "PUNTAJE MÍNIMO": 109.25
+    },
+    {
+      "CAMPUS": "CUTONALA",
+      "CARRERA": "LICENCIATURA EN ARQUITECTURA",
+      "ASPIRANTES": 192,
+      "ADMITIDOS": 80,
+      "NO ADMITIDOS": 112,
+      "CUPO": 80,
+      "% ADMISIÓN": 0.4166666666666667,
+      "PUNTAJE MÍNIMO": 138.1267
+    },
+    {
+      "CAMPUS": "CUTONALA",
+      "CARRERA": "LICENCIATURA EN CIENCIAS FORENSES",
+      "ASPIRANTES": 77,
+      "ADMITIDOS": 35,
+      "NO ADMITIDOS": 42,
+      "CUPO": 35,
+      "% ADMISIÓN": 0.45454545454545453,
+      "PUNTAJE MÍNIMO": 127.9067
+    },
+    {
+      "CAMPUS": "CUTONALA",
+      "CARRERA": "LICENCIATURA EN CONTADURIA PUBLICA",
+      "ASPIRANTES": 150,
+      "ADMITIDOS": 120,
+      "NO ADMITIDOS": 30,
+      "CUPO": 120,
+      "% ADMISIÓN": 0.8,
+      "PUNTAJE MÍNIMO": 114.0833
+    },
+    {
+      "CAMPUS": "CUTONALA",
+      "CARRERA": "LICENCIATURA EN DISEÑO DE ARTESANIA",
+      "ASPIRANTES": 33,
+      "ADMITIDOS": 33,
+      "NO ADMITIDOS": 0,
+      "CUPO": 33,
+      "% ADMISIÓN": 1,
+      "PUNTAJE MÍNIMO": 86.5567
+    },
+    {
+      "CAMPUS": "CUTONALA",
+      "CARRERA": "LICENCIATURA EN ENFERMERIA",
+      "ASPIRANTES": 131,
+      "ADMITIDOS": 35,
+      "NO ADMITIDOS": 96,
+      "CUPO": 35,
+      "% ADMISIÓN": 0.26717557251908397,
+      "PUNTAJE MÍNIMO": 133.6667
+    },
+    {
+      "CAMPUS": "CUTONALA",
+      "CARRERA": "LICENCIATURA EN ESTUDIOS LIBERALES",
+      "ASPIRANTES": 8,
+      "ADMITIDOS": 8,
+      "NO ADMITIDOS": 0,
+      "CUPO": 35,
+      "% ADMISIÓN": 1,
+      "PUNTAJE MÍNIMO": 101.51
+    },
+    {
+      "CAMPUS": "CUTONALA",
+      "CARRERA": "LICENCIATURA EN GERONTOLOGIA",
+      "ASPIRANTES": 32,
+      "ADMITIDOS": 32,
+      "NO ADMITIDOS": 0,
+      "CUPO": 35,
+      "% ADMISIÓN": 1,
+      "PUNTAJE MÍNIMO": 83.4333
+    },
+    {
+      "CAMPUS": "CUTONALA",
+      "CARRERA": "LICENCIATURA EN HISTORIA DEL ARTE",
+      "ASPIRANTES": 11,
+      "ADMITIDOS": 11,
+      "NO ADMITIDOS": 0,
+      "CUPO": 30,
+      "% ADMISIÓN": 1,
+      "PUNTAJE MÍNIMO": 92.98
+    },
+    {
+      "CAMPUS": "CUTONALA",
+      "CARRERA": "LICENCIATURA EN NUTRICION",
+      "ASPIRANTES": 182,
+      "ADMITIDOS": 71,
+      "NO ADMITIDOS": 111,
+      "CUPO": 71,
+      "% ADMISIÓN": 0.3901098901098901,
+      "PUNTAJE MÍNIMO": 128.6667
+    },
+    {
+      "CAMPUS": "CUTONALA",
+      "CARRERA": "LICENCIATURA EN SALUD PUBLICA",
+      "ASPIRANTES": 24,
+      "ADMITIDOS": 24,
+      "NO ADMITIDOS": 0,
+      "CUPO": 35,
+      "% ADMISIÓN": 1,
+      "PUNTAJE MÍNIMO": 95.1667
+    },
+    {
+      "CAMPUS": "CUTONALA",
+      "CARRERA": "MEDICO CIRUJANO Y PARTERO",
+      "ASPIRANTES": 699,
+      "ADMITIDOS": 120,
+      "NO ADMITIDOS": 579,
+      "CUPO": 120,
+      "% ADMISIÓN": 0.17167381974248927,
+      "PUNTAJE MÍNIMO": 174.2333
+    }
+];
+
+            function loadOptions() {
+                var campusSelect = document.getElementById('campus');
+                var campusOptions = [];
+
+                data.forEach(function(item) {
+                    if (!campusOptions.includes(item.CAMPUS)) {
+                        campusOptions.push(item.CAMPUS);
+                        var option = document.createElement('option');
+                        option.text = item.CAMPUS;
+                        option.value = item.CAMPUS;
+                        campusSelect.add(option);
+                    }
+                });
+
+                filterCareers();
+            }
+
+            function filterCareers() {
+                var campusSelect = document.getElementById('campus');
+                var careerSelect = document.getElementById('career');
+                var selectedCampus = campusSelect.value;
+
+                careerSelect.innerHTML = '';
+                var careers = data.filter(function(item) {
+                    return item.CAMPUS === selectedCampus;
+                });
+
+                careers.forEach(function(career) {
+                    var option = document.createElement('option');
+                    option.text = career.CARRERA;
+                    option.value = career.CARRERA;
+                    careerSelect.add(option);
+                });
+            }
+
+            function calculateScore() {
+                var campus = document.getElementById('campus').value;
+                var career = document.getElementById('career').value;
+                var average = parseFloat(document.getElementById('average').value);
+                var selectedData = data.find(function(item) {
+                    return item.CAMPUS === campus && item.CARRERA === career;
+                });
+
+                if (selectedData) {
+                    var minScore = selectedData["PUNTAJE MÍNIMO"];
+                    var scoreDifference = minScore - average;
+                    var admitidos = selectedData.ADMITIDOS;
+                    var noAdmitidos = selectedData["NO ADMITIDOS"];
+                    var admissionPercentage = (admitidos / (admitidos + noAdmitidos)) * 100;
+
+                    document.getElementById('minScore').innerText = minScore.toFixed(2);
+                    document.getElementById('examScore').innerText = scoreDifference.toFixed(2);
+                    document.getElementById('admitted').innerText = admitidos;
+                    document.getElementById('notAdmitted').innerText = noAdmitidos;
+                    document.getElementById('admissionPercentage').innerText = admissionPercentage.toFixed(0) + "%";
+
+                    document.getElementById('resultContainer').style.display = 'block'; // Mostrar el contenedor de resultados
+                    updateOtherCenters(); // Actualizar otros centros
+                    drawChart(admitidos, noAdmitidos);
+                } else {
+                    document.getElementById('resultContainer').innerHTML = "<p>No se encontraron datos para la combinación seleccionada.</p>";
+                    document.getElementById('resultContainer').style.border = 'none'; // Quita el borde
+                    document.getElementById('otherCenters').style.display = 'none'; // Ocultar otros centros
+                    document.getElementById('myChart').style.display = 'none'; // Ocultar gráfico si no hay datos
+                }
+            }
+
+            function updateOtherCenters() {
+                var campus = document.getElementById('campus').value;
+                var career = document.getElementById('career').value;
+                var otherCentersHTML = "<h3 class='otherCenters-title'>Otros centros universitarios que ofrecen la carrera</h3>";
+                otherCentersHTML += "<table>" +
+                    "<tr><th>Centro Universitario</th><th>Puntaje Mínimo Requerido</th></tr>";
+
+                data.forEach(function(item) {
+                    if (item.CARRERA === career && item.CAMPUS !== campus) {
+                        var minScoreRequired = item["PUNTAJE MÍNIMO"];
+                        var center = item.CAMPUS;
+
+                        otherCentersHTML += "<tr><td>" + center + "</td><td>" + minScoreRequired.toFixed(2) + "</td></tr>";
+                    }
+                });
+
+                otherCentersHTML += "</table>";
+                var otherCentersDiv = document.getElementById('otherCenters');
+                otherCentersDiv.innerHTML = otherCentersHTML;
+                otherCentersDiv.style.display = 'block'; // Mostrar otros centros
+            }
+
+            function drawChart(admitidos, noAdmitidos) {
+                var ctx = document.getElementById('myChart').getContext('2d');
+                var myChart = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Admitidos', 'No Admitidos'],
+                        datasets: [{
+                            label: 'Estadísticas de Admisión',
+                            data: [admitidos, noAdmitidos],
+                            backgroundColor: [
+                                'rgba(54, 162, 235, 0.2)',
+                                'rgba(255, 99, 132, 0.2)'
+                            ],
+                            borderColor: [
+                                'rgba(54, 162, 235, 1)',
+                                'rgba(255, 99, 132, 1)'
+                            ],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                });
+                document.getElementById('myChart').style.display = 'block'; // Mostrar gráfico
+            }
+
+            loadOptions();
+
+            document.getElementById('campus').addEventListener('change', function() {
+                filterCareers();
+            });
+
+            document.getElementById('calculateButton').addEventListener('click', function() {
+                calculateScore();
+            });
+        });
+    </script>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script>
+    function drawChart(admitidos, noAdmitidos) {
+      const ctx = document.getElementById('myChart').getContext('2d');
+      new Chart(ctx, {
+        type: 'bar',
+        data: {
+          labels: ['Admitidos', 'No Admitidos'],
+          datasets: [{
+            label: 'Estadísticas de Admisión',
+            data: [admitidos, noAdmitidos],
+            backgroundColor: ['#28a74588', '#dc354588'],
+            borderColor: ['#28a745', '#dc3545'],
+            borderWidth: 2
+          }]
+        },
+        options: {
+          responsive: true,
+          plugins: {
+            legend: {
+              display: false
+            },
+            tooltip: {
+              backgroundColor: '#0328C9',
+              titleColor: '#fff',
+              bodyColor: '#fff',
+              padding: 10,
+              borderRadius: 6
+            }
+          },
+          scales: {
+            y: {
+              beginAtZero: true,
+              ticks: {
+                color: '#444',
+                font: { size: 14 }
+              },
+              grid: {
+                color: '#e0e0e0'
+              }
+            },
+            x: {
+              ticks: {
+                color: '#444',
+                font: { size: 14 }
+              },
+              grid: {
+                color: '#f0f0f0'
+              }
+            }
+          }
+        }
+      });
+      document.getElementById('myChart').style.display = 'block';
+    }
+  </script>
+</body>
+</html>
