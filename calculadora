@@ -136,6 +136,22 @@
       background-color: #d4edda;
     }
 
+    #graphContainer {
+      margin-top: 30px;
+      text-align: center;
+    }
+
+    #graphContainer canvas {
+      max-width: 100%;
+      max-height: 400px;
+    }
+
+    #graphTitle {
+      font-size: 28px;
+      color: #0328C9;
+      margin-bottom: 15px;
+    }
+
     #disclaimer {
       margin-top: 30px;
       padding: 18px;
@@ -213,10 +229,16 @@
             </table>
         </div>
 
+        <div id="graphContainer" style="display:none;">
+            <h3 id="graphTitle"></h3>
+            <canvas id="myChart"></canvas>
+        </div>
+
         <div id="disclaimer">
             Estos datos son extraídos del documento oficial UDG puntajes mínimos y cada semestre pueden cambiar. Tómalos solo como una referencia; te recomendamos aumentar al menos 3 puntos el resultado del examen que viene marcado.
         </div>
     </div>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             var data = [ {
@@ -2871,6 +2893,8 @@
     }
 ];
 
+            var chartInstance;
+
             function loadOptions() {
                 var campusSelect = document.getElementById('campus');
                 var campusOptions = [];
@@ -2906,7 +2930,7 @@
                 });
             }
 
-            function calculateScore() {
+                        function calculateScore() {
                 var campus = document.getElementById('campus').value;
                 var career = document.getElementById('career').value;
                 var average = parseFloat(document.getElementById('average').value);
@@ -2928,16 +2952,16 @@
                         };
                     });
 
-                    results.sort(function(a, b) {
-                        return a.puntajeNecesario - b.puntajeNecesario;
-                    });
+                    var selectedRow = results.find(function(r) { return r.campus === campus; });
+                    var otherRows = results.filter(function(r) { return r.campus !== campus; });
+                    otherRows.sort(function(a, b) { return b.puntajeNecesario - a.puntajeNecesario; });
 
                     var tbody = document.querySelector('#resultTable tbody');
                     tbody.innerHTML = '';
 
-                    results.forEach(function(r) {
+                    function appendRow(r, highlight) {
                         var tr = document.createElement('tr');
-                        if (r.campus === campus) {
+                        if (highlight) {
                             tr.classList.add('highlight');
                         }
                         tr.innerHTML = "<td>" + r.campus + "</td>" +
@@ -2948,12 +2972,52 @@
                                        "<td>" + r.minScore.toFixed(2) + "</td>" +
                                        "<td>" + r.puntajeNecesario.toFixed(2) + "</td>";
                         tbody.appendChild(tr);
-                    });
+                    }
+
+                    appendRow(selectedRow, true);
+                    otherRows.forEach(function(r) { appendRow(r, false); });
 
                     document.getElementById('resultContainer').style.display = 'block';
+                    document.getElementById('graphTitle').innerText = 'Estadísticas de admisión en "' + campus + ' - ' + career + '"';
+                    drawChart(selectedRow.admitidos, selectedRow.noAdmitidos);
+                    document.getElementById('graphContainer').style.display = 'block';
                 } else {
                     document.getElementById('resultContainer').style.display = 'none';
+                    document.getElementById('graphContainer').style.display = 'none';
                 }
+            }
+
+            function drawChart(admitidos, noAdmitidos) {
+                if (chartInstance) {
+                    chartInstance.destroy();
+                }
+                var ctx = document.getElementById('myChart').getContext('2d');
+                chartInstance = new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: ['Admitidos', 'No admitidos'],
+                        datasets: [{
+                            label: 'Estadísticas de Admisión',
+                            data: [admitidos, noAdmitidos],
+                            backgroundColor: [
+                                'rgba(54, 162, 235, 0.2)',
+                                'rgba(255, 99, 132, 0.2)'
+                            ],
+                            borderColor: [
+                                'rgba(54, 162, 235, 1)',
+                                'rgba(255, 99, 132, 1)'
+                            ],
+                            borderWidth: 1
+                        }]
+                    },
+                    options: {
+                        scales: {
+                            y: {
+                                beginAtZero: true
+                            }
+                        }
+                    }
+                });
             }
 
             loadOptions();
