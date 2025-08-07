@@ -132,29 +132,8 @@
       font-weight: 600;
     }
 
-    #graphContainer {
-      margin-top: 30px;
-      text-align: center;
-    }
-
-    #graphContainer canvas {
-      max-width: 100%;
-      max-height: 400px;
-    }
-
-    #otherCenters {
-      margin-top: 30px;
-      display: none;
-      padding: 20px;
-      background-color: #f8f9fa;
-      border-radius: 12px;
-      box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-    }
-
-    .otherCenters-title {
-      font-size: 28px;
-      color: #0328C9;
-      margin-bottom: 15px;
+    #resultTable tr.highlight {
+      background-color: #d4edda;
     }
 
     #disclaimer {
@@ -181,7 +160,7 @@
         padding: 20px;
       }
 
-      .header h1, .otherCenters-title, #resultContainer h2 {
+      .header h1, #resultContainer h2 {
         font-size: 22px;
       }
 
@@ -219,44 +198,25 @@
         <div id="resultContainer">
             <h2>RESULTADOS</h2>
             <table id="resultTable">
-                <tr>
-                    <th>Puntaje mínimo</th>
-                    <td id="minScore"></td>
-                </tr>
-                <tr>
-                    <th>Puntaje necesario en el examen</th>
-                    <td id="examScore"></td>
-                </tr>
-                <tr>
-                    <th>Admitidos último calendario</th>
-                    <td id="admitted"></td>
-                </tr>
-                <tr>
-                    <th>No admitidos último calendario</th>
-                    <td id="notAdmitted"></td>
-                </tr>
-                <tr>
-                    <th>% De admisión</th>
-                    <td id="admissionPercentage"></td>
-                </tr>
+                <thead>
+                    <tr>
+                        <th>Centro universitario</th>
+                        <th>Aspirantes</th>
+                        <th>Admitidos</th>
+                        <th>No admitidos</th>
+                        <th>% de admisión</th>
+                        <th>Puntaje mínimo</th>
+                        <th>Puntaje necesario</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
             </table>
         </div>
-        
-        <div id="graphContainer">
-            <!-- Aquí se mostrará el gráfico -->
-            <canvas id="myChart" style="display: none;"></canvas>
-        </div>
-        
-        <div id="otherCenters">
-            <h3 class="otherCenters-title">Otros centros universitarios que ofrecen la carrera</h3>
-            <!-- Aquí se mostrarán los otros centros universitarios que ofrecen la misma carrera -->
-        </div>
-        
+
         <div id="disclaimer">
             Estos datos son extraídos del documento oficial UDG puntajes mínimos y cada semestre pueden cambiar. Tómalos solo como una referencia; te recomendamos aumentar al menos 3 puntos el resultado del examen que viene marcado.
         </div>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             var data = [ {
@@ -2950,85 +2910,50 @@
                 var campus = document.getElementById('campus').value;
                 var career = document.getElementById('career').value;
                 var average = parseFloat(document.getElementById('average').value);
-                var selectedData = data.find(function(item) {
-                    return item.CAMPUS === campus && item.CARRERA === career;
+                var careerData = data.filter(function(item) {
+                    return item.CARRERA === career;
                 });
 
-                if (selectedData) {
-                    var minScore = selectedData["PUNTAJE MÍNIMO"];
-                    var scoreDifference = minScore - average;
-                    var admitidos = selectedData.ADMITIDOS;
-                    var noAdmitidos = selectedData["NO ADMITIDOS"];
-                    var admissionPercentage = (admitidos / (admitidos + noAdmitidos)) * 100;
+                if (careerData.length > 0) {
+                    var results = careerData.map(function(item) {
+                        var minScore = item["PUNTAJE MÍNIMO"];
+                        return {
+                            campus: item.CAMPUS,
+                            aspirantes: item.ASPIRANTES,
+                            admitidos: item.ADMITIDOS,
+                            noAdmitidos: item["NO ADMITIDOS"],
+                            porcentaje: item["% ADMISIÓN"] * 100,
+                            minScore: minScore,
+                            puntajeNecesario: minScore - average
+                        };
+                    });
 
-                    document.getElementById('minScore').innerText = minScore.toFixed(2);
-                    document.getElementById('examScore').innerText = scoreDifference.toFixed(2);
-                    document.getElementById('admitted').innerText = admitidos;
-                    document.getElementById('notAdmitted').innerText = noAdmitidos;
-                    document.getElementById('admissionPercentage').innerText = admissionPercentage.toFixed(0) + "%";
+                    results.sort(function(a, b) {
+                        return a.puntajeNecesario - b.puntajeNecesario;
+                    });
 
-                    document.getElementById('resultContainer').style.display = 'block'; // Mostrar el contenedor de resultados
-                    updateOtherCenters(); // Actualizar otros centros
-                    drawChart(admitidos, noAdmitidos);
-                } else {
-                    document.getElementById('resultContainer').innerHTML = "<p>No se encontraron datos para la combinación seleccionada.</p>";
-                    document.getElementById('resultContainer').style.border = 'none'; // Quita el borde
-                    document.getElementById('otherCenters').style.display = 'none'; // Ocultar otros centros
-                    document.getElementById('myChart').style.display = 'none'; // Ocultar gráfico si no hay datos
-                }
-            }
+                    var tbody = document.querySelector('#resultTable tbody');
+                    tbody.innerHTML = '';
 
-            function updateOtherCenters() {
-                var campus = document.getElementById('campus').value;
-                var career = document.getElementById('career').value;
-                var otherCentersHTML = "<h3 class='otherCenters-title'>Otros centros universitarios que ofrecen la carrera</h3>";
-                otherCentersHTML += "<table>" +
-                    "<tr><th>Centro Universitario</th><th>Puntaje Mínimo Requerido</th></tr>";
-
-                data.forEach(function(item) {
-                    if (item.CARRERA === career && item.CAMPUS !== campus) {
-                        var minScoreRequired = item["PUNTAJE MÍNIMO"];
-                        var center = item.CAMPUS;
-
-                        otherCentersHTML += "<tr><td>" + center + "</td><td>" + minScoreRequired.toFixed(2) + "</td></tr>";
-                    }
-                });
-
-                otherCentersHTML += "</table>";
-                var otherCentersDiv = document.getElementById('otherCenters');
-                otherCentersDiv.innerHTML = otherCentersHTML;
-                otherCentersDiv.style.display = 'block'; // Mostrar otros centros
-            }
-
-            function drawChart(admitidos, noAdmitidos) {
-                var ctx = document.getElementById('myChart').getContext('2d');
-                var myChart = new Chart(ctx, {
-                    type: 'bar',
-                    data: {
-                        labels: ['Admitidos', 'No Admitidos'],
-                        datasets: [{
-                            label: 'Estadísticas de Admisión',
-                            data: [admitidos, noAdmitidos],
-                            backgroundColor: [
-                                'rgba(54, 162, 235, 0.2)',
-                                'rgba(255, 99, 132, 0.2)'
-                            ],
-                            borderColor: [
-                                'rgba(54, 162, 235, 1)',
-                                'rgba(255, 99, 132, 1)'
-                            ],
-                            borderWidth: 1
-                        }]
-                    },
-                    options: {
-                        scales: {
-                            y: {
-                                beginAtZero: true
-                            }
+                    results.forEach(function(r) {
+                        var tr = document.createElement('tr');
+                        if (r.campus === campus) {
+                            tr.classList.add('highlight');
                         }
-                    }
-                });
-                document.getElementById('myChart').style.display = 'block'; // Mostrar gráfico
+                        tr.innerHTML = "<td>" + r.campus + "</td>" +
+                                       "<td>" + r.aspirantes + "</td>" +
+                                       "<td>" + r.admitidos + "</td>" +
+                                       "<td>" + r.noAdmitidos + "</td>" +
+                                       "<td>" + r.porcentaje.toFixed(0) + "%</td>" +
+                                       "<td>" + r.minScore.toFixed(2) + "</td>" +
+                                       "<td>" + r.puntajeNecesario.toFixed(2) + "</td>";
+                        tbody.appendChild(tr);
+                    });
+
+                    document.getElementById('resultContainer').style.display = 'block';
+                } else {
+                    document.getElementById('resultContainer').style.display = 'none';
+                }
             }
 
             loadOptions();
@@ -3042,62 +2967,5 @@
             });
         });
     </script>
-  </div>
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script>
-    function drawChart(admitidos, noAdmitidos) {
-      const ctx = document.getElementById('myChart').getContext('2d');
-      new Chart(ctx, {
-        type: 'bar',
-        data: {
-          labels: ['Admitidos', 'No Admitidos'],
-          datasets: [{
-            label: 'Estadísticas de Admisión',
-            data: [admitidos, noAdmitidos],
-            backgroundColor: ['#28a74588', '#dc354588'],
-            borderColor: ['#28a745', '#dc3545'],
-            borderWidth: 2
-          }]
-        },
-        options: {
-          responsive: true,
-          plugins: {
-            legend: {
-              display: false
-            },
-            tooltip: {
-              backgroundColor: '#0328C9',
-              titleColor: '#fff',
-              bodyColor: '#fff',
-              padding: 10,
-              borderRadius: 6
-            }
-          },
-          scales: {
-            y: {
-              beginAtZero: true,
-              ticks: {
-                color: '#444',
-                font: { size: 14 }
-              },
-              grid: {
-                color: '#e0e0e0'
-              }
-            },
-            x: {
-              ticks: {
-                color: '#444',
-                font: { size: 14 }
-              },
-              grid: {
-                color: '#f0f0f0'
-              }
-            }
-          }
-        }
-      });
-      document.getElementById('myChart').style.display = 'block';
-    }
-  </script>
-</body>
-</html>
+  </body>
+  </html>
