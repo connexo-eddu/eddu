@@ -154,13 +154,19 @@
       max-height: 400px;
     }
 
-    #graphTitle {
-      font-size: 28px;
-      color: #0328C9;
-      margin-bottom: 15px;
-    }
+#graphTitle {
+    font-size: 28px;
+    color: #0328C9;
+    margin-bottom: 15px;
+}
 
-    #disclaimer {
+#recommendation {
+  margin-top: 20px;
+  font-size: 16px;
+  text-align: center;
+}
+
+#disclaimer {
       margin-top: 30px;
       padding: 18px;
       background-color: #fff3cd;
@@ -237,12 +243,14 @@
             </table>
         </div>
 
-        <div id="graphContainer" style="display:none;">
-            <h3 id="graphTitle"></h3>
-            <canvas id="myChart"></canvas>
-        </div>
+         <div id="graphContainer" style="display:none;">
+              <h3 id="graphTitle"></h3>
+              <canvas id="myChart"></canvas>
+          </div>
 
-        <div id="disclaimer">
+          <div id="recommendation" style="display:none;"></div>
+
+          <div id="disclaimer">
             Estos datos son extraídos del documento oficial UDG puntajes mínimos y cada semestre pueden cambiar. Tómalos solo como una referencia; te recomendamos aumentar al menos 3 puntos el resultado del examen que viene marcado.
         </div>
     </div>
@@ -2902,6 +2910,19 @@
 ];
 
             var chartInstance;
+            var integralCareers = ["INGENIERIA BIOMEDICA","LICENCIATURA EN ARQUITECTURA","LICENCIATURA EN CIRUJANO DENTISTA","LICENCIATURA EN DISEÑO, ARTE Y TECNOLOGIAS INTERACTIVAS","LICENCIATURA EN PSICOLOGIA","MEDICO CIRUJANO Y PARTERO"];
+            var exponencialCareers = ["INGENIERIA CIVIL","INGENIERIA MECATRONICA DUAL","LICENCIATURA EN BIOQUIMICA CLINICA Y MEDICINA DE LABORATORIO","LICENCIATURA EN DISEÑO DE INTERIORES Y AMBIENTACION","LICENCIATURA EN MEDICINA VETERINARIA Y ZOOTECNIA","LICENCIATURA EN NUTRICION","LICENCIATURA EN QUIMICO FARMACEUTICO BIOLOGO"];
+            var radicalCareers = ["ABOGADO","INGENIERIA EN COMPUTACION","INGENIERIA EN DISEÑO INDUSTRIAL","INGENIERIA EN ELECTRONICA Y SISTEMAS INTELIGENTES","INGENIERIA EN MECATRONICA INTELIGENTE","INGENIERIA INDUSTRIAL","INGENIERIA INFORMATICA","INGENIERIA MECANICA ELECTRICA","INGENIERIA MECATRONICA","INGENIERIA ROBOTICA","LICENCIATURA EN ADMINISTRACION FINANCIERA Y SISTEMAS","LICENCIATURA EN ARTES AUDIOVISUALES","LICENCIATURA EN CIBERSEGURIDAD","LICENCIATURA EN CIENCIAS AMBIENTALES Y DEL TERRITORIO","LICENCIATURA EN CIENCIAS FORENSES","LICENCIATURA EN CIENCIAS Y ARTES CULINARIAS","LICENCIATURA EN COMUNICACION PUBLICA","LICENCIATURA EN CREATIVIDAD DIGITAL","LICENCIATURA EN CULTURA FISICA Y DEPORTES","LICENCIATURA EN DESARROLLO TURISTICO SUSTENTABLE","LICENCIATURA EN DISEÑO DE MODAS","LICENCIATURA EN DISEÑO INDUSTRIAL","LICENCIATURA EN DISEÑO PARA LA COMUNICACION GRAFICA","LICENCIATURA EN ENFERMERIA","LICENCIATURA EN GESTION DE NEGOCIOS GASTRONOMICOS","LICENCIATURA EN INGENIERIA EN ALIMENTOS Y BIOTECNOLOGIA","LICENCIATURA EN INTELIGENCIA ARTIFICIAL Y CIENCIA DE LOS DATOS","LICENCIATURA EN INTELIGENCIA FINANCIERA Y DE NEGOCIOS","LICENCIATURA EN NEGOCIOS INTERNACIONALES","LICENCIATURA EN NEGOCIOS SOSTENIBLES","LICENCIATURA EN PODOLOGIA","LICENCIATURA EN TECNOLOGIAS BIOMEDICAS","LICENCIATURA EN TERAPIA FISICA","TECNICO SUPERIOR UNIVERSITARIO EN EMERGENCIAS, SEGURIDAD LABORAL Y RESCATES","ABOGADO (SEMIESCOLARIZADO)","LICENCIATURA EN ADMINISTRACION","LICENCIATURA EN CONTADURIA PUBLICA","LICENCIATURA EN CRIMINOLOGIA"];
+            var fiftyCareers = ["CARRERA EN ENFERMERIA (NIVEL TECNICO)","INGENIERIA BIOQUIMICA","INGENIERIA EN CIENCIA DE MATERIALES","INGENIERIA EN CIENCIAS COMPUTACIONALES","INGENIERIA EN DESARROLLO DE SOFTWARE","INGENIERIA EN ELECTROMOVILIDAD Y AUTOTRONICA","INGENIERIA EN ELECTRONICA Y COMPUTACION","INGENIERIA EN LOGISTICA Y TRANSPORTE","INGENIERIA EN NEGOCIOS","INGENIERIA EN SISTEMAS BIOLOGICOS","INGENIERIA EN TOPOGRAFIA GEOMATICA","INGENIERIA FOTONICA","INGENIERIA QUIMICA","INGENIERO AGRONOMO","LICENCIATURA EN AGRONEGOCIOS","LICENCIATURA EN ANTROPOLOGIA","LICENCIATURA EN ARTES","LICENCIATURA EN ARTES ESCENICAS PARA LA EXPRESION TEATRAL","LICENCIATURA EN ARTES VISUALES PARA LA EXPRESION PLASTICA","LICENCIATURA EN ESTUDIOS LIBERALES","LICENCIATURA EN FILOSOFIA","LICENCIATURA EN FISICA","LICENCIATURA EN GEOGRAFIA","LICENCIATURA EN GERONTOLOGIA","LICENCIATURA EN GESTION Y ECONOMIA AMBIENTAL","LICENCIATURA EN HISTORIA","LICENCIATURA EN INGENIERIA EN AUTOMATIZACION INDUSTRIAL","LICENCIATURA EN INGENIERIA EN MANEJO DE RECURSOS NATURALES","LICENCIATURA EN INGENIERIA EN OBRAS Y SERVICIOS","LICENCIATURA EN INGENIERIA EN TELEINFORMATICA","LICENCIATURA EN MATEMATICAS","LICENCIATURA EN MERCADOTECNIA","LICENCIATURA EN QUIMICA","LICENCIATURA EN RELACIONES INTERNACIONALES","LICENCIATURA EN RELACIONES PUBLICAS Y COMUNICACION","LICENCIATURA EN TURISMO","LICENCIATURA EN URBANISTICA Y MEDIO AMBIENTE","TECNICO SUPERIOR UNIVERSITARIO EN PROTESIS DENTAL","TECNICO SUPERIOR UNIVERSITARIO EN RADIOLOGIA E IMAGEN","TECNICO SUPERIOR UNIVERSITARIO EN TERAPIA RESPIRATORIA"];
+
+            function getCourseRecommendation(career) {
+                var c = career.toUpperCase().trim();
+                if (integralCareers.includes(c)) return 'INTEGRAL';
+                if (exponencialCareers.includes(c)) return 'EXPONENCIAL';
+                if (radicalCareers.includes(c)) return 'RADICAL';
+                if (fiftyCareers.includes(c)) return '50 TEMAS MAS PREGUNTADOS';
+                return 'INTEGRAL';
+            }
 
             function loadOptions() {
                 var campusSelect = document.getElementById('campus');
@@ -2991,9 +3012,14 @@
                     document.getElementById('graphTitle').innerText = 'Estadísticas de admisión en "' + campus + ' - ' + career + '"';
                     drawChart(selectedRow.admitidos, selectedRow.noAdmitidos);
                     document.getElementById('graphContainer').style.display = 'block';
+                    var recommendedCourse = getCourseRecommendation(career);
+                    var recDiv = document.getElementById('recommendation');
+                    recDiv.innerHTML = 'Como necesitas <strong>' + selectedRow.puntajeNecesario.toFixed(2) + '</strong> puntos en tu examen, el curso que te recomendamos es <strong>' + recommendedCourse + '</strong>';
+                    recDiv.style.display = 'block';
                 } else {
                     document.getElementById('resultContainer').style.display = 'none';
                     document.getElementById('graphContainer').style.display = 'none';
+                    document.getElementById('recommendation').style.display = 'none';
                 }
             }
 
