@@ -2960,9 +2960,9 @@
                         };
                     });
 
-                    var selectedRow = results.find(function(r) { return r.campus === campus; });
-                    var otherRows = results.filter(function(r) { return r.campus !== campus; });
-                    otherRows.sort(function(a, b) { return b.puntajeNecesario - a.puntajeNecesario; });
+                    var selectedIndex = results.findIndex(function(r) { return r.campus === campus; });
+                    var selectedRow = selectedIndex > -1 ? results.splice(selectedIndex, 1)[0] : null;
+                    results.sort(function(a, b) { return b.puntajeNecesario - a.puntajeNecesario; });
 
                     var tbody = document.querySelector('#resultTable tbody');
                     tbody.innerHTML = '';
@@ -2982,8 +2982,10 @@
                         tbody.appendChild(tr);
                     }
 
-                    appendRow(selectedRow, true);
-                    otherRows.forEach(function(r) { appendRow(r, false); });
+                    if (selectedRow) {
+                        appendRow(selectedRow, true);
+                    }
+                    results.forEach(function(r) { appendRow(r, false); });
 
                     document.getElementById('resultContainer').style.display = 'block';
                     document.getElementById('graphTitle').innerText = 'Estadísticas de admisión en "' + campus + ' - ' + career + '"';
