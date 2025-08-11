@@ -109,8 +109,15 @@
       margin-bottom: 20px;
     }
 
+    .table-wrapper {
+      width: 100%;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
     #resultTable {
       width: 100%;
+      min-width: 800px;
       border-collapse: collapse;
       margin-top: 15px;
     }
@@ -227,20 +234,22 @@
         
         <div id="resultContainer">
             <h2>RESULTADOS</h2>
-            <table id="resultTable">
-                <thead>
-                    <tr>
-                        <th>Centro universitario</th>
-                        <th>Aspirantes</th>
-                        <th>Admitidos</th>
-                        <th>No admitidos</th>
-                        <th>% de admisión</th>
-                        <th>Puntaje mínimo</th>
-                        <th>Puntaje necesario</th>
-                    </tr>
-                </thead>
-                <tbody></tbody>
-            </table>
+            <div class="table-wrapper">
+                <table id="resultTable">
+                    <thead>
+                        <tr>
+                            <th>Centro universitario</th>
+                            <th>Aspirantes</th>
+                            <th>Admitidos</th>
+                            <th>No admitidos</th>
+                            <th>% de admisión</th>
+                            <th>Puntaje mínimo</th>
+                            <th>Puntaje necesario</th>
+                        </tr>
+                    </thead>
+                    <tbody></tbody>
+                </table>
+            </div>
         </div>
 
          <div id="graphContainer" style="display:none;">
